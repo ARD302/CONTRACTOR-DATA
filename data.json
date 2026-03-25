@@ -346,50 +346,7 @@
       "laborCost": 30
     }
   ],
-  "materials": [
-    {
-      "date": "2026-03-20",
-      "project": "P001",
-      "activity": "Slab",
-      "volume": 45,
-      "unit": "mÃÂ³",
-      "cement": 414,
-      "steel": 2800,
-      "concrete": 45,
-      "sand": 27,
-      "gravel": 27,
-      "otherCost": 150,
-      "totalMaterial": 3200
-    },
-    {
-      "date": "2026-03-20",
-      "project": "P002",
-      "activity": "Column",
-      "volume": 8,
-      "unit": "mÃÂ³",
-      "cement": 74,
-      "steel": 950,
-      "concrete": 8,
-      "sand": 4.8,
-      "gravel": 4.8,
-      "otherCost": 60,
-      "totalMaterial": 850
-    },
-    {
-      "date": "2026-03-21",
-      "project": "P001",
-      "activity": "Beam",
-      "volume": 12,
-      "unit": "mÃÂ³",
-      "cement": 110,
-      "steel": 650,
-      "concrete": 12,
-      "sand": 7.2,
-      "gravel": 7.2,
-      "otherCost": 40,
-      "totalMaterial": 1100
-    }
-  ],
+  "materials": [],
   "cost": [
     {
       "date": "2026-03-20",
