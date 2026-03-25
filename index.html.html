@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contractor Control System</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f3ef;
+  --surface: #ffffff;
+  --card: #faf9f7;
+  --border: #e2ddd6;
+  --border-dark: #c8c0b4;
+  --text: #1a1714;
+  --muted: #7a7268;
+  --accent: #c84b00;
+  --accent2: #2563a8;
+  --accent3: #1a8c4e;
+  --warn: #d97706;
+  --syne: 'Syne', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: var(--syne); font-size: 14px; min-height: 100vh; }
+
+/* ── Layout ── */
+.layout { display: flex; min-height: 100vh; }
+nav {
+  width: 220px; min-width: 220px; background: var(--text); color: #f5f3ef;
+  display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; overflow-y: auto;
+}
+.nav-brand { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,.1); }
+.nav-brand .title { font-size: 13px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); line-height: 1.3; }
+.nav-brand .sub { font-family: var(--mono); font-size: 9px; color: rgba(255,255,255,.4); margin-top: 4px; letter-spacing: 1px; text-transform: uppercase; }
+.nav-section { padding: 14px 0 4px 20px; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,.25); font-family: var(--mono); }
+.nav-item {
+  display: flex; align-items: center; gap: 9px; padding: 10px 20px; cursor: pointer;
+  transition: background .15s; font-size: 12px; font-weight: 600; letter-spacing: .5px;
+  color: rgba(255,255,255,.65); border-left: 3px solid transparent;
+}
+.nav-item:hover { background: rgba(255,255,255,.06); color: #fff; }
+.nav-item.active { background: rgba(200,75,0,.15); color: #fff; border-left-color: var(--accent); }
+.nav-item .icon { font-size: 14px; opacity: .8; }
+
+/* ── Config panel ── */
+.config-bar {
+  background: #1e3a5f; color: #fff; padding: 10px 20px;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  border-bottom: 2px solid var(--accent2); font-family: var(--mono); font-size: 11px;
+}
+.config-bar label { color: rgba(255,255,255,.6); white-space: nowrap; }
+.config-bar input {
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2);
+  color: #fff; padding: 4px 10px; border-radius: 4px; font-family: var(--mono); font-size: 11px;
+  width: 220px; outline: none;
+}
+.config-bar input:focus { border-color: var(--accent2); }
+.config-bar input::placeholder { color: rgba(255,255,255,.3); }
+.btn-config {
+  background: var(--accent2); color: #fff; border: none; padding: 5px 14px;
+  border-radius: 4px; cursor: pointer; font-family: var(--mono); font-size: 11px;
+  font-weight: 500; white-space: nowrap;
+}
+.btn-config:hover { background: #1e50a0; }
+.status-dot { width: 8px; height: 8px; border-radius: 50%; background: #aaa; flex-shrink: 0; }
+.status-dot.ok { background: #4caf50; }
+.status-dot.err { background: #f44336; }
+.status-dot.saving { background: var(--warn); animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+#status-text { color: rgba(255,255,255,.6); font-size: 10px; }
+
+/* ── Main ── */
+.main { flex: 1; display: flex; flex-direction: column; overflow-x: hidden; }
+.content { padding: 32px 36px; flex: 1; }
+.page { display: none; animation: fadeIn .2s ease; }
+.page.active { display: block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+.page-header {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  margin-bottom: 28px; padding-bottom: 16px; border-bottom: 2px solid var(--border-dark);
+  flex-wrap: wrap; gap: 10px;
+}
+.page-header h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+.page-header .tag {
+  font-family: var(--mono); font-size: 10px; background: var(--accent);
+  color: #fff; padding: 3px 10px; border-radius: 3px; letter-spacing: 1px;
+}
+.page-header .actions { display: flex; gap: 8px; align-items: center; }
+
+/* ── Buttons ── */
+.btn {
+  padding: 7px 16px; border-radius: 6px; border: none; cursor: pointer;
+  font-family: var(--syne); font-size: 12px; font-weight: 700; letter-spacing: .5px;
+  transition: all .15s; display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #a83d00; }
+.btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border-dark); }
+.btn-secondary:hover { background: var(--bg); }
+.btn-danger { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
+.btn-danger:hover { background: #fecaca; }
+.btn-sm { padding: 4px 10px; font-size: 11px; }
+
+/* ── KPI ── */
+.kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 14px; margin-bottom: 28px; }
+.kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; position: relative; overflow: hidden; }
+.kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--accent); }
+.kpi-card.blue::before { background: var(--accent2); }
+.kpi-card.green::before { background: var(--accent3); }
+.kpi-card.warn::before { background: var(--warn); }
+.kpi-card label { display:block; font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); margin-bottom:8px; font-family:var(--mono); }
+.kpi-card .val { font-family:var(--mono); font-size:20px; font-weight:500; color:var(--text); }
+.kpi-card .val.green { color:var(--accent3); }
+.kpi-card .val.red { color:var(--accent); }
+.kpi-card .val.blue { color:var(--accent2); }
+
+/* ── Tables ── */
+.table-wrap { background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-bottom:24px; }
+.table-header { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid var(--border); background:var(--card); gap:10px; flex-wrap:wrap; }
+.table-header h3 { font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); }
+.table-header .badge { font-family:var(--mono); font-size:10px; background:var(--bg); border:1px solid var(--border); padding:2px 8px; border-radius:20px; color:var(--muted); }
+.scroll-wrap { overflow-x: auto; }
+table { width:100%; border-collapse:collapse; font-family:var(--mono); font-size:12px; }
+thead th { background:#f0ece6; padding:9px 12px; text-align:left; font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); white-space:nowrap; border-bottom:1px solid var(--border); }
+thead th.r { text-align:right; }
+tbody tr { border-bottom:1px solid var(--border); transition:background .12s; }
+tbody tr:last-child { border-bottom:none; }
+tbody tr:hover { background:rgba(200,75,0,.03); }
+td { padding:8px 12px; color:var(--text); }
+td.r { text-align:right; }
+td.muted { color:var(--muted); }
+td.profit { color:var(--accent3); font-weight:500; }
+td.cost { color:var(--accent); }
+td.revenue { color:var(--accent2); }
+.pill { display:inline-block; padding:2px 8px; border-radius:20px; font-size:10px; font-weight:600; letter-spacing:.5px; }
+.pill.active { background:#dcfce7; color:#15803d; }
+.pill.planning { background:#fef3c7; color:#b45309; }
+.pill.completed { background:#e0f2fe; color:#0369a1; }
+.pill.inactive { background:#f3f4f6; color:#6b7280; }
+
+/* Score bar */
+.score-bar-wrap { display:flex; align-items:center; gap:8px; }
+.score-bar { flex:1; height:6px; background:var(--border); border-radius:3px; overflow:hidden; min-width:60px; }
+.score-bar-fill { height:100%; border-radius:3px; background:var(--accent3); }
+.score-bar-fill.warn { background:var(--warn); }
+.score-val { font-family:var(--mono); font-size:11px; color:var(--muted); min-width:28px; text-align:right; }
+
+/* ── Modal ── */
+.modal-overlay {
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,.5);
+  z-index:1000; align-items:center; justify-content:center; padding:20px;
+}
+.modal-overlay.open { display:flex; }
+.modal {
+  background:var(--surface); border-radius:12px; width:100%; max-width:560px;
+  max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,.3);
+}
+.modal-header {
+  padding:20px 24px 16px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.modal-header h2 { font-size:16px; font-weight:800; }
+.modal-close { background:none; border:none; cursor:pointer; font-size:20px; color:var(--muted); line-height:1; }
+.modal-body { padding:20px 24px; display:flex; flex-direction:column; gap:14px; }
+.modal-footer { padding:16px 24px; border-top:1px solid var(--border); display:flex; gap:10px; justify-content:flex-end; }
+.form-group { display:flex; flex-direction:column; gap:5px; }
+.form-group label { font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--muted); font-family:var(--mono); }
+.form-group input, .form-group select, .form-group textarea {
+  border:1px solid var(--border-dark); border-radius:6px; padding:9px 12px;
+  font-family:var(--mono); font-size:12px; color:var(--text); background:var(--surface); outline:none;
+  transition:border-color .15s;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--accent2); }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+/* ── Empty state ── */
+.empty-state { text-align:center; padding:40px 20px; color:var(--muted); font-family:var(--mono); font-size:12px; }
+.empty-state .icon { font-size:32px; margin-bottom:10px; }
+
+/* ── Dashboard activity cards ── */
+.activity-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; margin-bottom:24px; }
+.activity-card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:14px 16px; }
+.activity-card .act-name { font-size:12px; font-weight:700; margin-bottom:8px; }
+.activity-card .act-row { display:flex; justify-content:space-between; font-family:var(--mono); font-size:11px; color:var(--muted); margin-bottom:3px; }
+.activity-card .act-row .pos { color:var(--accent3); }
+.activity-card .act-row .neg { color:var(--accent); }
+
+/* ── Inline editable ── */
+.editable-row td { position:relative; }
+.row-actions { display:flex; gap:4px; opacity:0; transition:opacity .15s; }
+tr:hover .row-actions { opacity:1; }
+</style>
+</head>
+<body>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modal-title">Add Entry</h2>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" id="modal-save-btn" onclick="saveModalEntry()">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+
+<!-- ── Sidebar ── -->
+<nav>
+  <div class="nav-brand">
+    <div class="title">Contractor<br>Control</div>
+    <div class="sub">Dahdah GC · v2.0</div>
+  </div>
+  <div class="nav-section">Overview</div>
+  <div class="nav-item active" onclick="show('dashboard',this)"><span class="icon">📊</span> Dashboard</div>
+  <div class="nav-item" onclick="show('project-summary',this)"><span class="icon">📋</span> Project Summary</div>
+  <div class="nav-section">Setup</div>
+  <div class="nav-item" onclick="show('projects',this)"><span class="icon">🏗️</span> Projects</div>
+  <div class="nav-item" onclick="show('workers',this)"><span class="icon">👷</span> Workers</div>
+  <div class="nav-item" onclick="show('activities',this)"><span class="icon">⚙️</span> Activity List</div>
+  <div class="nav-section">Daily Ops</div>
+  <div class="nav-item" onclick="show('payroll',this)"><span class="icon">💰</span> Payroll Log</div>
+  <div class="nav-item" onclick="show('materials',this)"><span class="icon">🧱</span> Material Log</div>
+  <div class="nav-item" onclick="show('cost',this)"><span class="icon">📈</span> Cost Tracking</div>
+  <div class="nav-item" onclick="show('daily',this)"><span class="icon">📝</span> Daily Log</div>
+  <div class="nav-item" onclick="show('decisions',this)"><span class="icon">🎯</span> Decision Log</div>
+  <div class="nav-section">Settings</div>
+  <div class="nav-item" onclick="show('settings',this)"><span class="icon">⚙️</span> GitHub Setup</div>
+</nav>
+
+<!-- ── Main ── -->
+<div class="main">
+
+  <!-- Config bar -->
+  <div class="config-bar">
+    <div class="status-dot" id="status-dot"></div>
+    <span id="status-text">Not connected — configure GitHub below</span>
+    <label>Token:</label>
+    <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+    <label>Repo:</label>
+    <input type="text" id="gh-repo" placeholder="username/repo-name">
+    <button class="btn-config" onclick="saveConfig()">Connect</button>
+    <button class="btn-config" onclick="loadFromGitHub()" style="background:#1a8c4e">↓ Load</button>
+    <button class="btn-config" onclick="saveToGitHub()" style="background:var(--accent)">↑ Save</button>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div id="page-dashboard" class="page active">
+      <div class="page-header">
+        <h1>Dashboard</h1>
+        <span class="tag">LIVE SUMMARY</span>
+      </div>
+      <div class="kpi-grid" id="kpi-grid"></div>
+      <h3 style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;font-family:var(--mono);">Activity Breakdown (Cost Tracking)</h3>
+      <div class="activity-grid" id="activity-cards"></div>
+    </div>
+
+    <!-- PROJECT SUMMARY -->
+    <div id="page-project-summary" class="page">
+      <div class="page-header"><h1>Project Summary</h1><span class="tag">AUTO-CALCULATED</span></div>
+      <div class="table-wrap">
+        <div class="table-header"><h3>All Projects</h3></div>
+        <div class="scroll-wrap">
+          <table>
+            <thead><tr>
+              <th>Code</th><th>Name</th><th class="r">Revenue</th><th class="r">Cost</th>
+              <th class="r">Profit</th><th class="r">Volume</th><th class="r">Profit/Unit</th>
+              <th class="r">Labor Hrs</th><th class="r">Avg Score</th>
+            </tr></thead>
+            <tbody id="tbody-project-summary"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div id="page-projects" class="page">
+      <div class="page-header">
+        <h1>Projects</h1>
+        <div class="actions">
+          <span class="tag">SETUP</span>
+          <button class="btn btn-primary" onclick="openModal('project')">+ Add Project</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header"><h3>Project Registry</h3><span class="badge" id="badge-projects">0</span></div>
+        <div class="scroll-wrap">
+          <table>
+            <thead><tr><th>Code</th><th>Name</th><th>Client</th><th>Location</th><th>Status</th><th>Start Date</th><th>Notes</th><th></th></tr></thead>
+            <tbody id="tbody-projects"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORKERS -->
+    <div id="page-workers" class="page">
+      <div class="page-header">
+        <h1>Workers</h1>
+        <div class="actions">
+          <span class="tag">SETUP</span>
+          <button class="btn btn-primary" onclick="openModal('worker')">+ Add Worker</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header"><h3>Worker Registry</h3><span class="badge" id="badge-workers">0</span></div>
+        <div class="scroll-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Phone</th><th class="r">Daily Rate</th><th class="r">Hourly Rate</th><th>Default Project</th><th>Status</th><th>Hire Date</th><th></th></tr></thead>
+            <tbody id="tbody-workers"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIVITIES -->
+    <div id="page-activities" class="page">
+      <div class="page-header">
+        <h1>Activity List</h1>
+        <div class="actions">
+          <span class="tag">SETUP</span>
+          <button class="btn btn-primary" onclick="openModal('activity')">+ Add Activity</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header"><h3>Defined Activities</h3><span class="badge" id="badge-activities">0</span></div>
+        <table>
+          <thead><tr><th>#</th><th>Activity</th><th>Group</th><th>Unit</th><th></th></tr></thead>
+          <tbody id="tbody-activities"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PAYROLL -->
+    <div id="page-payroll" class="page">
+      <div class="page-header">
+        <h1>Payroll Log</h1>
+        <div class="actions">
+          <span class="tag">DAILY INPUT</span>
+          <button class="btn btn-primary" onclick="openModal('payroll')">+ Add Entry</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header"><h3>Labor Records</h3><span class="badge" id="badge-payroll">0</span></div>
+        <div class="scroll-wrap">
+          <table>
+            <thead><tr><th>Date</th><th>Project</th><th>Activity</th><th>Worker</th><th>Role</th><th class="r">Hours</th><th class="r">Rate/hr</th><th class="r">Labor Cost</th><th></th></tr></thead>
+            <tbody id="tbody-payroll"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- MATERIALS -->
+    <div id="page-materials" class="page">
+      <div class="page-header">
+        <h1>Material Log</h1>
+        <div class="actions">
+          <span class="tag">DAILY INPUT</span>
+          <button class="btn btn-primary" onclick="openModal('material')">+ Add Entry</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header"><h3>Material Records</h3><span class="badge" id="badge-materials">0</span></div>
+        <div class="scroll-wrap">
+          <table>
+            <thead><tr><th>Date</th><th>Project</th><th>Activity</th><th class="r">Volume</th><th>Unit</th><th class="r">Cement bags</th><th class="r">Steel kg</th><th class="r">Concrete m³</th><th class="r">Sand m³</th><th class="r">Gravel m³</th><th class="r">Other $</th><th class="r">Total Mat. $</th><th></th></tr></thead>
+            <tbody id="tbody-materials"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- COST -->
+    <div id="page-cost" class="page">
+      <div class="page-header">
+        <h1>Cost Tracking</h1>
+        <div class="actions">
+          <span class="tag">DAILY INPUT</span>
+          <button class="btn btn-primary" onclick="openModal('cost')">+ Add Entry</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header"><h3>Activity Cost & Profitability</h3><span class="badge" id="badge-cost">0</span></div>
+        <div class="scroll-wrap">
+          <table>
+            <thead><tr><th>Date</th><th>Project</th><th>Activity</th><th>Status</th><th class="r">Volume</th><th>Unit</th><th class="r">Labor $</th><th class="r">Material $</th><th class="r">Other $</th><th class="r">Total Cost $</th><th class="r">Revenue $</th><th class="r">Profit $</th><th class="r">Profit/Unit</th><th class="r">Labor Hrs</th><th></th></tr></thead>
+            <tbody id="tbody-cost"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAILY LOG -->
+    <div id="page-daily" class="page">
+      <div class="page-header">
+        <h1>Daily Log</h1>
+        <div class="actions">
+          <span class="tag">MANAGEMENT</span>
+          <button class="btn btn-primary" onclick="openModal('daily')">+ Add Entry</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header"><h3>Site Performance Scores (0–1)</h3><span class="badge" id="badge-daily">0</span></div>
+        <div class="scroll-wrap">
+          <table>
+            <thead><tr><th>Date</th><th>Project</th><th class="r">Mindset</th><th class="r">Site Control</th><th class="r">Concrete Quality</th><th class="r">Cost Control</th><th class="r">Problem Handling</th><th class="r">Discipline</th><th class="r">Total Score</th><th>Notes</th><th></th></tr></thead>
+            <tbody id="tbody-daily"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- DECISIONS -->
+    <div id="page-decisions" class="page">
+      <div class="page-header">
+        <h1>Decision Log</h1>
+        <div class="actions">
+          <span class="tag">OPTIONAL</span>
+          <button class="btn btn-primary" onclick="openModal('decision')">+ Add Decision</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header"><h3>Site Decisions</h3><span class="badge" id="badge-decisions">0</span></div>
+        <div class="scroll-wrap">
+          <table>
+            <thead><tr><th>Date</th><th>Project</th><th>Activity</th><th style="min-width:240px">Decision</th><th class="r">Facts</th><th class="r">No Ego</th><th class="r">Numbers</th><th class="r">Worst Case</th><th class="r">Simple</th><th class="r">Score</th><th>Approved</th><th>Follow-up</th><th></th></tr></thead>
+            <tbody id="tbody-decisions"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="page-settings" class="page">
+      <div class="page-header"><h1>GitHub Setup</h1><span class="tag">ONE-TIME</span></div>
+      <div style="max-width:600px;display:flex;flex-direction:column;gap:16px;">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;">
+          <h3 style="font-size:13px;font-weight:700;margin-bottom:16px;letter-spacing:1px;">Step-by-step setup</h3>
+          <ol style="display:flex;flex-direction:column;gap:10px;padding-left:18px;font-size:13px;line-height:1.7;color:var(--text);">
+            <li>Go to <b>github.com</b> and create a free account</li>
+            <li>Create a new repository — name it <b>contractor-data</b> — set it to <b>Private</b></li>
+            <li>Inside the repo, create a file named <b>data.json</b> — paste <code style="background:var(--bg);padding:1px 5px;border-radius:3px;font-size:11px;">{}</code> as content and commit</li>
+            <li>Go to <b>Settings → Developer settings → Personal access tokens → Tokens (classic)</b></li>
+            <li>Generate a new token — check the <b>repo</b> scope — copy it</li>
+            <li>Paste your token and repo name (<b>yourusername/contractor-data</b>) in the bar at the top</li>
+            <li>Click <b>Connect</b>, then <b>↓ Load</b> to pull data, <b>↑ Save</b> to push changes</li>
+          </ol>
+        </div>
+        <div style="background:#fff8ed;border:1px solid #fed7aa;border-radius:10px;padding:16px 20px;font-size:12px;color:#92400e;font-family:var(--mono);line-height:1.8;">
+          ⚠ Keep your token private — never share it. It gives write access to your GitHub repo.<br>
+          ✓ Your data file (data.json) on GitHub is your database — it saves everything.<br>
+          ✓ Always click <b>↑ Save</b> after making changes so they sync to GitHub.
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /.content -->
+</div><!-- /.main -->
+</div><!-- /.layout -->
+
+<script>
+// ═══════════════════════════════════════
+// DATA STORE
+// ═══════════════════════════════════════
+let DB = {
+  projects: [
+    { id:'P001', name:'Villa A', client:'Private Client', location:'Ehden', status:'Active', startDate:'2026-03-01', notes:'Example project' },
+    { id:'P002', name:'Villa B', client:'Private Client', location:'Zgharta', status:'Active', startDate:'2026-03-05', notes:'Example project' },
+    { id:'P003', name:'Hotel Renovation', client:'Hospitality Client', location:'Tripoli', status:'Planning', startDate:'2026-03-20', notes:'Example project' }
+  ],
+  workers: [
+    { id:'W001', name:'Ali Hassan', role:'Steel Fixer', phone:'03-111111', dailyRate:25, hourlyRate:3.125, defaultProject:'P001', status:'Active', hireDate:'2025-01-10' },
+    { id:'W002', name:'Mahmoud K', role:'Carpenter', phone:'03-222222', dailyRate:30, hourlyRate:3.75, defaultProject:'P001', status:'Active', hireDate:'2025-02-15' },
+    { id:'W003', name:'George N', role:'Labor', phone:'03-333333', dailyRate:20, hourlyRate:2.5, defaultProject:'P002', status:'Active', hireDate:'2024-11-01' },
+    { id:'W004', name:'Youssef A', role:'Concrete Finisher', phone:'03-444444', dailyRate:28, hourlyRate:3.5, defaultProject:'P001', status:'Active', hireDate:'2025-05-08' }
+  ],
+  activities: [
+    { name:'Footing', group:'Concrete', unit:'m³' },
+    { name:'Tie Beam', group:'Concrete', unit:'m³' },
+    { name:'Column', group:'Concrete', unit:'m³' },
+    { name:'Beam', group:'Concrete', unit:'m³' },
+    { name:'Slab', group:'Concrete', unit:'m³' },
+    { name:'Retaining Wall', group:'Concrete', unit:'m³' },
+    { name:'Blockwork', group:'Masonry', unit:'m²' },
+    { name:'Plaster', group:'Finishing', unit:'m²' },
+    { name:'Waterproofing', group:'Finishing', unit:'m²' },
+    { name:'Steel Erection', group:'Steel', unit:'ton' }
+  ],
+  payroll: [
+    { date:'2026-03-20', project:'P001', activity:'Slab', workerId:'W001', workerName:'Ali Hassan', role:'Steel Fixer', hours:10, hourlyRate:3.125, laborCost:31.25 },
+    { date:'2026-03-20', project:'P001', activity:'Slab', workerId:'W002', workerName:'Mahmoud K', role:'Carpenter', hours:9, hourlyRate:3.75, laborCost:33.75 },
+    { date:'2026-03-20', project:'P001', activity:'Slab', workerId:'W004', workerName:'Youssef A', role:'Concrete Finisher', hours:8, hourlyRate:3.5, laborCost:28 },
+    { date:'2026-03-20', project:'P002', activity:'Column', workerId:'W003', workerName:'George N', role:'Labor', hours:8, hourlyRate:2.5, laborCost:20 },
+    { date:'2026-03-21', project:'P001', activity:'Beam', workerId:'W001', workerName:'Ali Hassan', role:'Steel Fixer', hours:4, hourlyRate:3.125, laborCost:12.5 },
+    { date:'2026-03-21', project:'P002', activity:'Column', workerId:'W001', workerName:'Ali Hassan', role:'Steel Fixer', hours:4, hourlyRate:3.125, laborCost:12.5 },
+    { date:'2026-03-21', project:'P001', activity:'Beam', workerId:'W002', workerName:'Mahmoud K', role:'Carpenter', hours:8, hourlyRate:3.75, laborCost:30 }
+  ],
+  materials: [
+    { date:'2026-03-20', project:'P001', activity:'Slab', volume:45, unit:'m³', cement:414, steel:2800, concrete:45, sand:27, gravel:27, otherCost:150, totalMaterial:3200 },
+    { date:'2026-03-20', project:'P002', activity:'Column', volume:8, unit:'m³', cement:74, steel:950, concrete:8, sand:4.8, gravel:4.8, otherCost:60, totalMaterial:850 },
+    { date:'2026-03-21', project:'P001', activity:'Beam', volume:12, unit:'m³', cement:110, steel:650, concrete:12, sand:7.2, gravel:7.2, otherCost:40, totalMaterial:1100 }
+  ],
+  cost: [
+    { date:'2026-03-20', project:'P001', activity:'Slab', status:'Completed', volume:45, unit:'m³', labor:93, material:3200, other:150, totalCost:3443, revenue:4500, profit:1057, profitPerUnit:23.49, laborHours:27 },
+    { date:'2026-03-20', project:'P002', activity:'Column', status:'Completed', volume:8, unit:'m³', labor:20, material:850, other:100, totalCost:970, revenue:1350, profit:380, profitPerUnit:47.5, laborHours:8 },
+    { date:'2026-03-21', project:'P001', activity:'Beam', status:'Completed', volume:12, unit:'m³', labor:42.5, material:1100, other:60, totalCost:1202.5, revenue:1500, profit:297.5, profitPerUnit:24.79, laborHours:12 }
+  ],
+  daily: [
+    { date:'2026-03-20', project:'P001', mindset:1, siteControl:0.9, concreteQuality:0.9, costControl:0.8, problemHandling:1, discipline:0.9, totalScore:0.917, notes:'Slab pour well controlled' },
+    { date:'2026-03-20', project:'P002', mindset:0.9, siteControl:0.8, concreteQuality:0.8, costControl:0.8, problemHandling:0.9, discipline:0.9, totalScore:0.85, notes:'Column work acceptable' },
+    { date:'2026-03-21', project:'P001', mindset:0.9, siteControl:0.9, concreteQuality:0.8, costControl:0.9, problemHandling:0.9, discipline:0.9, totalScore:0.883, notes:'Beam activity on track' }
+  ],
+  decisions: [
+    { date:'2026-03-20', project:'P001', activity:'Slab', decision:'Accepted slightly higher slump after verifying pumpability and finish risk', facts:1, noEgo:1, numbersOk:1, worstCase:1, simple:1, score:1, approved:'Yes', followUp:'' },
+    { date:'2026-03-21', project:'P002', activity:'Column', decision:'Split Ali between 2 projects due to priority', facts:1, noEgo:1, numbersOk:1, worstCase:1, simple:1, score:1, approved:'Yes', followUp:'' }
+  ]
+};
+
+// GitHub config
+let GH = { token: '', repo: '' };
+
+function saveConfig() {
+  GH.token = document.getElementById('gh-token').value.trim();
+  GH.repo  = document.getElementById('gh-repo').value.trim();
+  localStorage.setItem('gh_token', GH.token);
+  localStorage.setItem('gh_repo', GH.repo);
+  setStatus('saving', 'Connecting...');
+  loadFromGitHub();
+}
+
+function loadConfig() {
+  GH.token = localStorage.getItem('gh_token') || '';
+  GH.repo  = localStorage.getItem('gh_repo')  || '';
+  if (GH.token) document.getElementById('gh-token').value = GH.token;
+  if (GH.repo)  document.getElementById('gh-repo').value  = GH.repo;
+}
+
+function setStatus(state, msg) {
+  const dot  = document.getElementById('status-dot');
+  const text = document.getElementById('status-text');
+  dot.className = 'status-dot ' + state;
+  text.textContent = msg;
+}
+
+async function loadFromGitHub() {
+  if (!GH.token || !GH.repo) { setStatus('err','No GitHub config — fill token & repo above'); return; }
+  setStatus('saving','Loading from GitHub...');
+  try {
+    const res = await fetch(`https://api.github.com/repos/${GH.repo}/contents/data.json`, {
+      headers: { Authorization: `token ${GH.token}`, Accept: 'application/vnd.github.v3+json' }
+    });
+    if (!res.ok) throw new Error(res.status);
+    const json = await res.json();
+    const content = JSON.parse(atob(json.content));
+    if (content && Object.keys(content).length > 0) {
+      DB = { ...DB, ...content };
+    }
+    window._ghSha = json.sha;
+    setStatus('ok', `Loaded from GitHub · ${new Date().toLocaleTimeString()}`);
+    renderAll();
+  } catch(e) {
+    setStatus('err', 'Load failed — check token & repo name');
+  }
+}
+
+async function saveToGitHub() {
+  if (!GH.token || !GH.repo) { setStatus('err','No GitHub config'); return; }
+  setStatus('saving','Saving to GitHub...');
+  try {
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(DB, null, 2))));
+    const body = { message: 'Update data ' + new Date().toISOString(), content };
+    if (window._ghSha) body.sha = window._ghSha;
+    const res = await fetch(`https://api.github.com/repos/${GH.repo}/contents/data.json`, {
+      method: 'PUT',
+      headers: { Authorization: `token ${GH.token}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error(res.status);
+    const json = await res.json();
+    window._ghSha = json.content.sha;
+    setStatus('ok', `Saved to GitHub · ${new Date().toLocaleTimeString()}`);
+  } catch(e) {
+    setStatus('err', 'Save failed — ' + e.message);
+  }
+}
+
+// ═══════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════
+function show(page, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  if (el) el.classList.add('active');
+  renderAll();
+}
+
+// ═══════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════
+const $ = id => document.getElementById(id);
+const fmt = n => isNaN(n) ? '—' : '$' + (+n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtN = n => isNaN(n) ? '—' : (+n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const pillStatus = s => {
+  const map = { Active:'active', Planning:'planning', Completed:'completed', Inactive:'inactive' };
+  return `<span class="pill ${map[s]||''}">${s}</span>`;
+};
+function scoreBar(v) {
+  const cls = v < 0.8 ? 'warn' : '';
+  return `<div class="score-bar-wrap"><div class="score-bar"><div class="score-bar-fill ${cls}" style="width:${v*100}%"></div></div><span class="score-val">${(+v).toFixed(2)}</span></div>`;
+}
+function delBtn(table, idx) {
+  return `<div class="row-actions"><button class="btn btn-danger btn-sm" onclick="deleteRow('${table}',${idx})">✕</button></div>`;
+}
+function deleteRow(table, idx) {
+  if (!confirm('Delete this entry?')) return;
+  DB[table].splice(idx,1);
+  renderAll();
+  autoSave();
+}
+function autoSave() {
+  localStorage.setItem('contractor_db', JSON.stringify(DB));
+}
+
+// ═══════════════════════════════════════
+// RENDER ALL
+// ═══════════════════════════════════════
+function renderAll() {
+  renderDashboard();
+  renderProjectSummary();
+  renderProjects();
+  renderWorkers();
+  renderActivities();
+  renderPayroll();
+  renderMaterials();
+  renderCost();
+  renderDaily();
+  renderDecisions();
+}
+
+function renderDashboard() {
+  const totalRev    = DB.cost.reduce((a,r)=>a+(+r.revenue||0),0);
+  const totalCost   = DB.cost.reduce((a,r)=>a+(+r.totalCost||0),0);
+  const totalProfit = totalRev - totalCost;
+  const totalHrs    = DB.payroll.reduce((a,r)=>a+(+r.hours||0),0);
+  const avgScore    = DB.daily.length ? DB.daily.reduce((a,r)=>a+(+r.totalScore||0),0)/DB.daily.length : 0;
+  const volumes     = DB.cost.reduce((a,r)=>a+(+r.volume||0),0);
+  const avgPPU      = volumes ? totalProfit/volumes : 0;
+
+  $('kpi-grid').innerHTML = `
+    <div class="kpi-card blue"><label>Total Revenue</label><div class="val blue">${fmt(totalRev)}</div></div>
+    <div class="kpi-card"><label>Total Cost</label><div class="val red">${fmt(totalCost)}</div></div>
+    <div class="kpi-card green"><label>Total Profit</label><div class="val green">${fmt(totalProfit)}</div></div>
+    <div class="kpi-card"><label>Avg Profit/Unit</label><div class="val">${fmt(avgPPU)}</div></div>
+    <div class="kpi-card blue"><label>Total Labor Hours</label><div class="val blue">${totalHrs} h</div></div>
+    <div class="kpi-card green"><label>Avg Daily Score</label><div class="val green">${avgScore.toFixed(3)}</div></div>
+  `;
+
+  $('activity-cards').innerHTML = DB.cost.map(r => {
+    const proj = DB.projects.find(p=>p.id===r.project);
+    return `<div class="activity-card">
+      <div class="act-name">📦 ${r.activity} — ${r.project} ${proj?proj.name:''}</div>
+      <div class="act-row"><span>Revenue</span><span class="pos">${fmt(r.revenue)}</span></div>
+      <div class="act-row"><span>Cost</span><span class="neg">${fmt(r.totalCost)}</span></div>
+      <div class="act-row"><span>Profit</span><span class="pos">${fmt(r.profit)}</span></div>
+      <div class="act-row"><span>Profit/Unit</span><span>${fmt(r.profitPerUnit)}</span></div>
+    </div>`;
+  }).join('') || '<div class="empty-state"><div class="icon">📊</div>No cost entries yet</div>';
+}
+
+function renderProjectSummary() {
+  $('tbody-project-summary').innerHTML = DB.projects.map(p => {
+    const costs   = DB.cost.filter(r=>r.project===p.id);
+    const rev     = costs.reduce((a,r)=>a+(+r.revenue||0),0);
+    const cost    = costs.reduce((a,r)=>a+(+r.totalCost||0),0);
+    const profit  = rev - cost;
+    const vol     = costs.reduce((a,r)=>a+(+r.volume||0),0);
+    const ppu     = vol ? profit/vol : 0;
+    const hrs     = DB.payroll.filter(r=>r.project===p.id).reduce((a,r)=>a+(+r.hours||0),0);
+    const dailies = DB.daily.filter(r=>r.project===p.id);
+    const avg     = dailies.length ? dailies.reduce((a,r)=>a+(+r.totalScore||0),0)/dailies.length : null;
+    return `<tr>
+      <td class="muted">${p.id}</td><td><b>${p.name}</b></td>
+      <td class="r revenue">${rev?fmt(rev):'—'}</td>
+      <td class="r cost">${cost?fmt(cost):'—'}</td>
+      <td class="r profit">${profit?fmt(profit):'—'}</td>
+      <td class="r">${vol?vol+' m³':'—'}</td>
+      <td class="r">${vol?fmt(ppu):'—'}</td>
+      <td class="r">${hrs?hrs+' h':'—'}</td>
+      <td class="r">${avg!==null?scoreBar(avg):'—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderProjects() {
+  $('badge-projects').textContent = DB.projects.length + ' projects';
+  $('tbody-projects').innerHTML = DB.projects.map((p,i) => `<tr>
+    <td><b>${p.id}</b></td><td>${p.name}</td><td>${p.client}</td>
+    <td>${p.location}</td><td>${pillStatus(p.status)}</td>
+    <td class="muted">${p.startDate}</td><td class="muted">${p.notes||'—'}</td>
+    <td>${delBtn('projects',i)}</td>
+  </tr>`).join('');
+}
+
+function renderWorkers() {
+  $('badge-workers').textContent = DB.workers.length + ' workers';
+  $('tbody-workers').innerHTML = DB.workers.map((w,i) => `<tr>
+    <td class="muted">${w.id}</td><td><b>${w.name}</b></td><td>${w.role}</td>
+    <td class="muted">${w.phone}</td>
+    <td class="r">$${(+w.dailyRate).toFixed(2)}</td>
+    <td class="r">$${(+w.hourlyRate).toFixed(3)}</td>
+    <td>${w.defaultProject}</td><td>${pillStatus(w.status)}</td>
+    <td class="muted">${w.hireDate}</td>
+    <td>${delBtn('workers',i)}</td>
+  </tr>`).join('');
+}
+
+function renderActivities() {
+  $('badge-activities').textContent = DB.activities.length + ' activities';
+  $('tbody-activities').innerHTML = DB.activities.map((a,i) => `<tr>
+    <td class="muted">${i+1}</td><td>${a.name}</td><td>${a.group}</td><td>${a.unit}</td>
+    <td>${delBtn('activities',i)}</td>
+  </tr>`).join('');
+}
+
+function renderPayroll() {
+  $('badge-payroll').textContent = DB.payroll.length + ' entries';
+  $('tbody-payroll').innerHTML = DB.payroll.map((r,i) => `<tr>
+    <td class="muted">${r.date}</td><td>${r.project}</td><td>${r.activity}</td>
+    <td>${r.workerName}</td><td>${r.role}</td>
+    <td class="r">${r.hours}</td>
+    <td class="r">$${(+r.hourlyRate).toFixed(3)}</td>
+    <td class="r profit">${fmt(r.laborCost)}</td>
+    <td>${delBtn('payroll',i)}</td>
+  </tr>`).join('') || '<tr><td colspan="9"><div class="empty-state"><div class="icon">💰</div>No payroll entries yet</div></td></tr>';
+}
+
+function renderMaterials() {
+  $('badge-materials').textContent = DB.materials.length + ' entries';
+  $('tbody-materials').innerHTML = DB.materials.map((r,i) => `<tr>
+    <td class="muted">${r.date}</td><td>${r.project}</td><td>${r.activity}</td>
+    <td class="r">${r.volume}</td><td>${r.unit}</td>
+    <td class="r">${r.cement}</td><td class="r">${r.steel}</td><td class="r">${r.concrete}</td>
+    <td class="r">${r.sand}</td><td class="r">${r.gravel}</td>
+    <td class="r">$${r.otherCost}</td><td class="r cost">${fmt(r.totalMaterial)}</td>
+    <td>${delBtn('materials',i)}</td>
+  </tr>`).join('') || '<tr><td colspan="13"><div class="empty-state"><div class="icon">🧱</div>No material entries yet</div></td></tr>';
+}
+
+function renderCost() {
+  $('badge-cost').textContent = DB.cost.length + ' entries';
+  $('tbody-cost').innerHTML = DB.cost.map((r,i) => `<tr>
+    <td class="muted">${r.date}</td><td>${r.project}</td><td>${r.activity}</td>
+    <td>${pillStatus(r.status)}</td>
+    <td class="r">${r.volume}</td><td>${r.unit}</td>
+    <td class="r">$${(+r.labor).toFixed(2)}</td>
+    <td class="r">$${(+r.material).toFixed(2)}</td>
+    <td class="r">$${(+r.other).toFixed(2)}</td>
+    <td class="r cost">${fmt(r.totalCost)}</td>
+    <td class="r revenue">${fmt(r.revenue)}</td>
+    <td class="r profit">${fmt(r.profit)}</td>
+    <td class="r profit">${fmt(r.profitPerUnit)}</td>
+    <td class="r">${r.laborHours} h</td>
+    <td>${delBtn('cost',i)}</td>
+  </tr>`).join('') || '<tr><td colspan="15"><div class="empty-state"><div class="icon">📈</div>No cost entries yet</div></td></tr>';
+}
+
+function renderDaily() {
+  $('badge-daily').textContent = DB.daily.length + ' entries';
+  $('tbody-daily').innerHTML = DB.daily.map((r,i) => `<tr>
+    <td class="muted">${r.date}</td><td>${r.project}</td>
+    <td class="r">${r.mindset}</td><td class="r">${r.siteControl}</td>
+    <td class="r">${r.concreteQuality}</td><td class="r">${r.costControl}</td>
+    <td class="r">${r.problemHandling}</td><td class="r">${r.discipline}</td>
+    <td class="r">${scoreBar(r.totalScore)}</td>
+    <td class="muted">${r.notes||'—'}</td>
+    <td>${delBtn('daily',i)}</td>
+  </tr>`).join('') || '<tr><td colspan="11"><div class="empty-state"><div class="icon">📝</div>No daily entries yet</div></td></tr>';
+}
+
+function renderDecisions() {
+  $('badge-decisions').textContent = DB.decisions.length + ' entries';
+  $('tbody-decisions').innerHTML = DB.decisions.map((r,i) => {
+    const chk = v => v==1 ? '<span style="color:var(--accent3)">✓</span>' : '<span style="color:var(--accent)">✗</span>';
+    return `<tr>
+      <td class="muted">${r.date}</td><td>${r.project}</td><td>${r.activity}</td>
+      <td>${r.decision}</td>
+      <td class="r">${chk(r.facts)}</td><td class="r">${chk(r.noEgo)}</td>
+      <td class="r">${chk(r.numbersOk)}</td><td class="r">${chk(r.worstCase)}</td>
+      <td class="r">${chk(r.simple)}</td>
+      <td class="r"><b>${r.score}</b></td>
+      <td>${pillStatus(r.approved==='Yes'?'Active':'Inactive')}</td>
+      <td class="muted">${r.followUp||'—'}</td>
+      <td>${delBtn('decisions',i)}</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="13"><div class="empty-state"><div class="icon">🎯</div>No decisions yet</div></td></tr>';
+}
+
+// ═══════════════════════════════════════
+// MODAL FORMS
+// ═══════════════════════════════════════
+let _modalType = '';
+
+function projOptions() { return DB.projects.map(p=>`<option value="${p.id}">${p.id} — ${p.name}</option>`).join(''); }
+function actOptions()  { return DB.activities.map(a=>`<option>${a.name}</option>`).join(''); }
+function wrkOptions()  { return DB.workers.map(w=>`<option value="${w.id}">${w.name} (${w.role})</option>`).join(''); }
+
+const FORMS = {
+  project: {
+    title: 'Add Project',
+    html: () => `
+      <div class="form-row">
+        <div class="form-group"><label>Project Code</label><input id="f-id" placeholder="P004"></div>
+        <div class="form-group"><label>Status</label><select id="f-status"><option>Active</option><option>Planning</option><option>Completed</option><option>Inactive</option></select></div>
+      </div>
+      <div class="form-group"><label>Project Name</label><input id="f-name" placeholder="Villa C"></div>
+      <div class="form-group"><label>Client</label><input id="f-client" placeholder="Client name"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Location</label><input id="f-location" placeholder="Ehden"></div>
+        <div class="form-group"><label>Start Date</label><input id="f-startDate" type="date"></div>
+      </div>
+      <div class="form-group"><label>Notes</label><input id="f-notes" placeholder="Optional notes"></div>`,
+    save: () => {
+      const entry = { id:$('f-id').value, name:$('f-name').value, client:$('f-client').value, location:$('f-location').value, status:$('f-status').value, startDate:$('f-startDate').value, notes:$('f-notes').value };
+      if (!entry.id||!entry.name) { alert('Code and Name are required'); return false; }
+      DB.projects.push(entry); return true;
+    }
+  },
+  worker: {
+    title: 'Add Worker',
+    html: () => `
+      <div class="form-row">
+        <div class="form-group"><label>Worker ID</label><input id="f-id" placeholder="W005"></div>
+        <div class="form-group"><label>Status</label><select id="f-status"><option>Active</option><option>Inactive</option></select></div>
+      </div>
+      <div class="form-group"><label>Full Name</label><input id="f-name" placeholder="Name"></div>
+      <div class="form-group"><label>Role</label><input id="f-role" placeholder="e.g. Steel Fixer"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Phone</label><input id="f-phone" placeholder="03-xxxxxx"></div>
+        <div class="form-group"><label>Hire Date</label><input id="f-hireDate" type="date"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Daily Rate ($/8h)</label><input id="f-dailyRate" type="number" step="0.5" placeholder="25"></div>
+        <div class="form-group"><label>Default Project</label><select id="f-defaultProject">${projOptions()}</select></div>
+      </div>`,
+    save: () => {
+      const dr = parseFloat($('f-dailyRate').value)||0;
+      const entry = { id:$('f-id').value, name:$('f-name').value, role:$('f-role').value, phone:$('f-phone').value, dailyRate:dr, hourlyRate:+(dr/8).toFixed(4), defaultProject:$('f-defaultProject').value, status:$('f-status').value, hireDate:$('f-hireDate').value };
+      if (!entry.id||!entry.name) { alert('ID and Name required'); return false; }
+      DB.workers.push(entry); return true;
+    }
+  },
+  activity: {
+    title: 'Add Activity',
+    html: () => `
+      <div class="form-group"><label>Activity Name</label><input id="f-name" placeholder="e.g. Footing"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Group</label><select id="f-group"><option>Concrete</option><option>Masonry</option><option>Finishing</option><option>Steel</option><option>Other</option></select></div>
+        <div class="form-group"><label>Unit</label><select id="f-unit"><option>m³</option><option>m²</option><option>ton</option><option>m</option><option>No.</option><option>LS</option></select></div>
+      </div>`,
+    save: () => {
+      const entry = { name:$('f-name').value, group:$('f-group').value, unit:$('f-unit').value };
+      if (!entry.name) { alert('Name required'); return false; }
+      DB.activities.push(entry); return true;
+    }
+  },
+  payroll: {
+    title: 'Add Payroll Entry',
+    html: () => `
+      <div class="form-row">
+        <div class="form-group"><label>Date</label><input id="f-date" type="date" value="${new Date().toISOString().split('T')[0]}"></div>
+        <div class="form-group"><label>Project</label><select id="f-project">${projOptions()}</select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Activity</label><select id="f-activity">${actOptions()}</select></div>
+        <div class="form-group"><label>Worker</label><select id="f-worker">${wrkOptions()}</select></div>
+      </div>
+      <div class="form-group"><label>Hours Worked</label><input id="f-hours" type="number" step="0.5" placeholder="8"></div>`,
+    save: () => {
+      const wId = $('f-worker').value;
+      const w   = DB.workers.find(x=>x.id===wId);
+      const hrs = parseFloat($('f-hours').value)||0;
+      const entry = { date:$('f-date').value, project:$('f-project').value, activity:$('f-activity').value, workerId:wId, workerName:w?w.name:'', role:w?w.role:'', hours:hrs, hourlyRate:w?w.hourlyRate:0, laborCost:+(hrs*(w?w.hourlyRate:0)).toFixed(2) };
+      if (!entry.date||!hrs) { alert('Date and Hours required'); return false; }
+      DB.payroll.push(entry); return true;
+    }
+  },
+  material: {
+    title: 'Add Material Entry',
+    html: () => `
+      <div class="form-row">
+        <div class="form-group"><label>Date</label><input id="f-date" type="date" value="${new Date().toISOString().split('T')[0]}"></div>
+        <div class="form-group"><label>Project</label><select id="f-project">${projOptions()}</select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Activity</label><select id="f-activity">${actOptions()}</select></div>
+        <div class="form-group"><label>Unit</label><select id="f-unit"><option>m³</option><option>m²</option><option>ton</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Volume / Qty</label><input id="f-volume" type="number" step="0.1" placeholder="0"></div>
+        <div class="form-group"><label>Cement (bags)</label><input id="f-cement" type="number" step="1" placeholder="0"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Steel (kg)</label><input id="f-steel" type="number" step="1" placeholder="0"></div>
+        <div class="form-group"><label>Concrete m³</label><input id="f-concrete" type="number" step="0.1" placeholder="0"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Sand m³</label><input id="f-sand" type="number" step="0.1" placeholder="0"></div>
+        <div class="form-group"><label>Gravel m³</label><input id="f-gravel" type="number" step="0.1" placeholder="0"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Other Cost ($)</label><input id="f-otherCost" type="number" step="1" placeholder="0"></div>
+        <div class="form-group"><label>Total Material ($)</label><input id="f-totalMaterial" type="number" step="1" placeholder="0"></div>
+      </div>`,
+    save: () => {
+      const entry = { date:$('f-date').value, project:$('f-project').value, activity:$('f-activity').value, volume:+$('f-volume').value, unit:$('f-unit').value, cement:+$('f-cement').value, steel:+$('f-steel').value, concrete:+$('f-concrete').value, sand:+$('f-sand').value, gravel:+$('f-gravel').value, otherCost:+$('f-otherCost').value, totalMaterial:+$('f-totalMaterial').value };
+      if (!entry.date) { alert('Date required'); return false; }
+      DB.materials.push(entry); return true;
+    }
+  },
+  cost: {
+    title: 'Add Cost Tracking Entry',
+    html: () => `
+      <div class="form-row">
+        <div class="form-group"><label>Date</label><input id="f-date" type="date" value="${new Date().toISOString().split('T')[0]}"></div>
+        <div class="form-group"><label>Project</label><select id="f-project">${projOptions()}</select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Activity</label><select id="f-activity">${actOptions()}</select></div>
+        <div class="form-group"><label>Status</label><select id="f-status"><option>In Progress</option><option>Completed</option><option>On Hold</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Volume</label><input id="f-volume" type="number" step="0.1" placeholder="0"></div>
+        <div class="form-group"><label>Unit</label><select id="f-unit"><option>m³</option><option>m²</option><option>ton</option><option>m</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Labor Cost ($)</label><input id="f-labor" type="number" step="0.01" placeholder="0"></div>
+        <div class="form-group"><label>Material Cost ($)</label><input id="f-material" type="number" step="0.01" placeholder="0"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Other Cost ($)</label><input id="f-other" type="number" step="0.01" placeholder="0"></div>
+        <div class="form-group"><label>Revenue ($)</label><input id="f-revenue" type="number" step="0.01" placeholder="0"></div>
+      </div>
+      <div class="form-group"><label>Labor Hours</label><input id="f-laborHours" type="number" step="0.5" placeholder="0"></div>`,
+    save: () => {
+      const labor=+$('f-labor').value, mat=+$('f-material').value, other=+$('f-other').value, rev=+$('f-revenue').value, vol=+$('f-volume').value;
+      const totalCost = labor+mat+other, profit = rev-totalCost, ppu = vol?+(profit/vol).toFixed(4):0;
+      const entry = { date:$('f-date').value, project:$('f-project').value, activity:$('f-activity').value, status:$('f-status').value, volume:vol, unit:$('f-unit').value, labor, material:mat, other, totalCost:+totalCost.toFixed(2), revenue:rev, profit:+profit.toFixed(2), profitPerUnit:ppu, laborHours:+$('f-laborHours').value };
+      if (!entry.date) { alert('Date required'); return false; }
+      DB.cost.push(entry); return true;
+    }
+  },
+  daily: {
+    title: 'Add Daily Log Entry',
+    html: () => `
+      <div class="form-row">
+        <div class="form-group"><label>Date</label><input id="f-date" type="date" value="${new Date().toISOString().split('T')[0]}"></div>
+        <div class="form-group"><label>Project</label><select id="f-project">${projOptions()}</select></div>
+      </div>
+      <p style="font-size:11px;color:var(--muted);font-family:var(--mono);">Score each category 0 to 1 (e.g. 0.8, 0.9, 1)</p>
+      <div class="form-row">
+        <div class="form-group"><label>Mindset</label><input id="f-mindset" type="number" step="0.1" min="0" max="1" placeholder="1"></div>
+        <div class="form-group"><label>Site Control</label><input id="f-siteControl" type="number" step="0.1" min="0" max="1" placeholder="1"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Concrete Quality</label><input id="f-concreteQuality" type="number" step="0.1" min="0" max="1" placeholder="1"></div>
+        <div class="form-group"><label>Cost Control</label><input id="f-costControl" type="number" step="0.1" min="0" max="1" placeholder="1"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Problem Handling</label><input id="f-problemHandling" type="number" step="0.1" min="0" max="1" placeholder="1"></div>
+        <div class="form-group"><label>Discipline</label><input id="f-discipline" type="number" step="0.1" min="0" max="1" placeholder="1"></div>
+      </div>
+      <div class="form-group"><label>Notes</label><input id="f-notes" placeholder="What happened today?"></div>`,
+    save: () => {
+      const scores = ['mindset','siteControl','concreteQuality','costControl','problemHandling','discipline'];
+      const vals = scores.map(s=>parseFloat($('f-'+s).value)||0);
+      const avg  = +(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(4);
+      const entry = { date:$('f-date').value, project:$('f-project').value, ...Object.fromEntries(scores.map((s,i)=>[s,vals[i]])), totalScore:avg, notes:$('f-notes').value };
+      if (!entry.date) { alert('Date required'); return false; }
+      DB.daily.push(entry); return true;
+    }
+  },
+  decision: {
+    title: 'Add Decision',
+    html: () => `
+      <div class="form-row">
+        <div class="form-group"><label>Date</label><input id="f-date" type="date" value="${new Date().toISOString().split('T')[0]}"></div>
+        <div class="form-group"><label>Project</label><select id="f-project">${projOptions()}</select></div>
+      </div>
+      <div class="form-group"><label>Activity</label><select id="f-activity">${actOptions()}</select></div>
+      <div class="form-group"><label>Decision Description</label><textarea id="f-decision" rows="3" placeholder="Describe the decision made..."></textarea></div>
+      <p style="font-size:11px;color:var(--muted);font-family:var(--mono);">Check each criterion (1 = yes, 0 = no)</p>
+      <div class="form-row">
+        <div class="form-group"><label>Facts Clear</label><select id="f-facts"><option value="1">Yes (1)</option><option value="0">No (0)</option></select></div>
+        <div class="form-group"><label>No Ego</label><select id="f-noEgo"><option value="1">Yes (1)</option><option value="0">No (0)</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Numbers OK</label><select id="f-numbersOk"><option value="1">Yes (1)</option><option value="0">No (0)</option></select></div>
+        <div class="form-group"><label>Worst Case OK</label><select id="f-worstCase"><option value="1">Yes (1)</option><option value="0">No (0)</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Simple Solution</label><select id="f-simple"><option value="1">Yes (1)</option><option value="0">No (0)</option></select></div>
+        <div class="form-group"><label>Approved?</label><select id="f-approved"><option>Yes</option><option>No</option></select></div>
+      </div>
+      <div class="form-group"><label>Follow-up Notes</label><input id="f-followUp" placeholder="Optional follow-up"></div>`,
+    save: () => {
+      const checks = ['facts','noEgo','numbersOk','worstCase','simple'];
+      const vals   = checks.map(c=>+$('f-'+c).value);
+      const score  = +(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2);
+      const entry  = { date:$('f-date').value, project:$('f-project').value, activity:$('f-activity').value, decision:$('f-decision').value, ...Object.fromEntries(checks.map((c,i)=>[c,vals[i]])), score, approved:$('f-approved').value, followUp:$('f-followUp').value };
+      if (!entry.date||!entry.decision) { alert('Date and Decision required'); return false; }
+      DB.decisions.push(entry); return true;
+    }
+  }
+};
+
+function openModal(type) {
+  _modalType = type;
+  const form = FORMS[type];
+  $('modal-title').textContent = form.title;
+  $('modal-body').innerHTML    = form.html();
+  $('modal-overlay').classList.add('open');
+}
+function closeModal() { $('modal-overlay').classList.remove('open'); }
+function saveModalEntry() {
+  const ok = FORMS[_modalType].save();
+  if (ok) { closeModal(); renderAll(); autoSave(); }
+}
+$('modal-overlay').addEventListener('click', e => { if (e.target === $('modal-overlay')) closeModal(); });
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+window.addEventListener('load', () => {
+  loadConfig();
+  const local = localStorage.getItem('contractor_db');
+  if (local) { try { DB = JSON.parse(local); } catch(e){} }
+  renderAll();
+  if (GH.token && GH.repo) loadFromGitHub();
+  else setStatus('', 'Not connected — go to GitHub Setup to configure');
+});
+</script>
+</body>
+</html>
