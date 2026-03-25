@@ -2,134 +2,264 @@
   "projects": [
     {
       "id": "P001",
-      "name": "Villa A",
+      "name": "Douaihy Residence",
       "client": "Private Client",
       "location": "Ehden",
       "status": "Active",
-      "startDate": "2026-03-01",
-      "notes": "Example project"
+      "startDate": "2025-05-06",
+      "notes": "Block B and Block A"
     },
     {
       "id": "P002",
-      "name": "Villa B",
+      "name": "Dr. pierre yammine",
       "client": "Private Client",
-      "location": "Zgharta",
+      "location": "EHDEN",
       "status": "Active",
-      "startDate": "2026-03-05",
-      "notes": "Example project"
+      "startDate": "2025-10-25",
+      "notes": "block A and block B"
     },
     {
       "id": "P003",
-      "name": "Hotel Renovation",
+      "name": "Restaurant Renovation FERDOS",
       "client": "Hospitality Client",
-      "location": "Tripoli",
-      "status": "Planning",
-      "startDate": "2026-03-20",
-      "notes": "Example project"
+      "location": "EHDEN",
+      "status": "Active",
+      "startDate": "2026-03-16",
+      "notes": "Civil works (R.C. work)"
+    },
+    {
+      "id": "P004",
+      "name": "Riva Kareh",
+      "client": "Private client",
+      "location": "EHDEN",
+      "status": "Active",
+      "startDate": "2025-06-03",
+      "notes": "Project had basement slab teared apart "
     }
   ],
   "workers": [
     {
       "id": "W001",
-      "name": "Ali Hassan",
-      "role": "Steel Fixer",
-      "phone": "03-111111",
-      "dailyRate": 25,
-      "hourlyRate": 3.125,
-      "defaultProject": "P001",
-      "status": "Active",
-      "hireDate": "2025-01-10"
-    },
-    {
-      "id": "W002",
-      "name": "Mahmoud K",
-      "role": "Carpenter",
-      "phone": "03-222222",
-      "dailyRate": 30,
-      "hourlyRate": 3.75,
-      "defaultProject": "P001",
-      "status": "Active",
-      "hireDate": "2025-02-15"
-    },
-    {
-      "id": "W003",
-      "name": "George N",
-      "role": "Labor",
-      "phone": "03-333333",
-      "dailyRate": 20,
-      "hourlyRate": 2.5,
-      "defaultProject": "P002",
-      "status": "Active",
-      "hireDate": "2024-11-01"
-    },
-    {
-      "id": "W004",
-      "name": "Youssef A",
-      "role": "Concrete Finisher",
-      "phone": "03-444444",
-      "dailyRate": 28,
-      "hourlyRate": 3.5,
-      "defaultProject": "P001",
-      "status": "Active",
-      "hireDate": "2025-05-08"
-    },
-    {
-      "id": "W005",
       "name": "Kenan Sabra",
       "role": "Foremen",
-      "phone": "81846701",
+      "phone": "81-846701",
       "dailyRate": 33,
       "hourlyRate": 4.125,
       "defaultProject": "P001",
       "status": "Active",
-      "hireDate": "2025-02-25"
+      "hireDate": "2025-01-01"
+    },
+    {
+      "id": "W002",
+      "name": "yael talje",
+      "role": "skilled labor",
+      "phone": "",
+      "dailyRate": 30,
+      "hourlyRate": 3.75,
+      "defaultProject": "P001",
+      "status": "Active",
+      "hireDate": "2025-01-01"
+    },
+    {
+      "id": "W003",
+      "name": "Fady Sabra",
+      "role": "semi skilled labor",
+      "phone": "71-494865",
+      "dailyRate": 27,
+      "hourlyRate": 3.375,
+      "defaultProject": "P001",
+      "status": "Active",
+      "hireDate": "2025-01-02"
+    },
+    {
+      "id": "W004",
+      "name": "Nayrouz talje",
+      "role": "skilled labor",
+      "phone": "03-541615",
+      "dailyRate": 30,
+      "hourlyRate": 3.75,
+      "defaultProject": "P002",
+      "status": "Active",
+      "hireDate": "2025-01-02"
+    },
+    {
+      "id": "W005",
+      "name": "Nidal",
+      "role": "Labor",
+      "phone": "",
+      "dailyRate": 22,
+      "hourlyRate": 2.75,
+      "defaultProject": "P001",
+      "status": "Active",
+      "hireDate": "2025-01-01"
+    },
+    {
+      "id": "W006",
+      "name": "issa",
+      "role": "labor",
+      "phone": "",
+      "dailyRate": 22,
+      "hourlyRate": 2.75,
+      "defaultProject": "P001",
+      "status": "Active",
+      "hireDate": "2025-01-02"
+    },
+    {
+      "id": "W007",
+      "name": "hamze",
+      "role": "Labor",
+      "phone": "",
+      "dailyRate": 21,
+      "hourlyRate": 2.625,
+      "defaultProject": "P001",
+      "status": "Active",
+      "hireDate": "2025-01-05"
+    },
+    {
+      "id": "W008",
+      "name": "raghed",
+      "role": "Labor",
+      "phone": "",
+      "dailyRate": 22,
+      "hourlyRate": 2.75,
+      "defaultProject": "P001",
+      "status": "Active",
+      "hireDate": "2025-01-09"
+    },
+    {
+      "id": "W009",
+      "name": "Yamen",
+      "role": "semi skilled labor",
+      "phone": "",
+      "dailyRate": 24,
+      "hourlyRate": 3,
+      "defaultProject": "P002",
+      "status": "Active",
+      "hireDate": "2025-01-09"
+    },
+    {
+      "id": "W010",
+      "name": "MOHAMAD",
+      "role": "semi skilled labor",
+      "phone": "70-995687",
+      "dailyRate": 24,
+      "hourlyRate": 3,
+      "defaultProject": "P002",
+      "status": "Active",
+      "hireDate": "2025-01-09"
+    },
+    {
+      "id": "W011",
+      "name": "aghyad",
+      "role": "Labor",
+      "phone": "",
+      "dailyRate": 18,
+      "hourlyRate": 2.25,
+      "defaultProject": "P001",
+      "status": "Active",
+      "hireDate": "2025-01-09"
+    },
+    {
+      "id": "W012",
+      "name": "Haydar",
+      "role": "labor",
+      "phone": "",
+      "dailyRate": 20,
+      "hourlyRate": 2.5,
+      "defaultProject": "P002",
+      "status": "Active",
+      "hireDate": "2025-01-09"
+    },
+    {
+      "id": "W013",
+      "name": "mouhtassem",
+      "role": "Labor",
+      "phone": "",
+      "dailyRate": 18,
+      "hourlyRate": 2.25,
+      "defaultProject": "P001",
+      "status": "Active",
+      "hireDate": "2025-01-09"
+    },
+    {
+      "id": "W014",
+      "name": "Lilane",
+      "role": "Labor",
+      "phone": "",
+      "dailyRate": 20,
+      "hourlyRate": 2.5,
+      "defaultProject": "P001",
+      "status": "Active",
+      "hireDate": "2025-01-09"
+    },
+    {
+      "id": "W015",
+      "name": "fakhem",
+      "role": "Labor",
+      "phone": "",
+      "dailyRate": 16,
+      "hourlyRate": 2,
+      "defaultProject": "P001",
+      "status": "Active",
+      "hireDate": "2025-01-09"
+    },
+    {
+      "id": "W016",
+      "name": "Hamoudeh",
+      "role": "Labor",
+      "phone": "",
+      "dailyRate": 17,
+      "hourlyRate": 2.125,
+      "defaultProject": "P001",
+      "status": "Active",
+      "hireDate": "2025-01-09"
     }
   ],
   "activities": [
     {
       "name": "Footing",
       "group": "Concrete",
-      "unit": "mÂ³"
+      "unit": "mÃÂ³"
     },
     {
       "name": "Tie Beam",
       "group": "Concrete",
-      "unit": "mÂ³"
+      "unit": "mÃÂ³"
     },
     {
       "name": "Column",
       "group": "Concrete",
-      "unit": "mÂ³"
+      "unit": "mÃÂ³"
     },
     {
       "name": "Beam",
       "group": "Concrete",
-      "unit": "mÂ³"
+      "unit": "mÃÂ³"
     },
     {
       "name": "Slab",
       "group": "Concrete",
-      "unit": "mÂ³"
+      "unit": "mÃÂ³"
     },
     {
       "name": "Retaining Wall",
       "group": "Concrete",
-      "unit": "mÂ³"
+      "unit": "mÃÂ³"
     },
     {
       "name": "Blockwork",
       "group": "Masonry",
-      "unit": "mÂ²"
+      "unit": "mÃÂ²"
     },
     {
       "name": "Plaster",
       "group": "Finishing",
-      "unit": "mÂ²"
+      "unit": "mÃÂ²"
     },
     {
       "name": "Waterproofing",
       "group": "Finishing",
-      "unit": "mÂ²"
+      "unit": "mÃÂ²"
     },
     {
       "name": "Steel Erection",
@@ -222,7 +352,7 @@
       "project": "P001",
       "activity": "Slab",
       "volume": 45,
-      "unit": "mÂ³",
+      "unit": "mÃÂ³",
       "cement": 414,
       "steel": 2800,
       "concrete": 45,
@@ -236,7 +366,7 @@
       "project": "P002",
       "activity": "Column",
       "volume": 8,
-      "unit": "mÂ³",
+      "unit": "mÃÂ³",
       "cement": 74,
       "steel": 950,
       "concrete": 8,
@@ -250,7 +380,7 @@
       "project": "P001",
       "activity": "Beam",
       "volume": 12,
-      "unit": "mÂ³",
+      "unit": "mÃÂ³",
       "cement": 110,
       "steel": 650,
       "concrete": 12,
@@ -267,7 +397,7 @@
       "activity": "Slab",
       "status": "Completed",
       "volume": 45,
-      "unit": "mÂ³",
+      "unit": "mÃÂ³",
       "labor": 93,
       "material": 3200,
       "other": 150,
@@ -283,7 +413,7 @@
       "activity": "Column",
       "status": "Completed",
       "volume": 8,
-      "unit": "mÂ³",
+      "unit": "mÃÂ³",
       "labor": 20,
       "material": 850,
       "other": 100,
@@ -299,7 +429,7 @@
       "activity": "Beam",
       "status": "Completed",
       "volume": 12,
-      "unit": "mÂ³",
+      "unit": "mÃÂ³",
       "labor": 42.5,
       "material": 1100,
       "other": 60,
