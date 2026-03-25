@@ -619,14 +619,40 @@ function scoreBar(v) {
   const cls = v < 0.8 ? 'warn' : '';
   return `<div class="score-bar-wrap"><div class="score-bar"><div class="score-bar-fill ${cls}" style="width:${v*100}%"></div></div><span class="score-val">${(+v).toFixed(2)}</span></div>`;
 }
-function delBtn(table, idx) {
-  return `<div class="row-actions"><button class="btn btn-danger btn-sm" onclick="deleteRow('${table}',${idx})">✕</button></div>`;
+function rowBtns(table, idx) {
+  return `<div class="row-actions" style="display:flex;gap:4px;">
+    <button class="btn btn-secondary btn-sm" onclick="editRow('${table}',${idx})">✎ Edit</button>
+    <button class="btn btn-danger btn-sm" onclick="deleteRow('${table}',${idx})">✕</button>
+  </div>`;
 }
 function deleteRow(table, idx) {
   if (!confirm('Delete this entry?')) return;
   DB[table].splice(idx,1);
   renderAll();
   autoSave();
+}
+
+let _editIdx = -1;
+
+function editRow(table, idx) {
+  _editIdx = idx;
+  const typeMap = { projects:'project', workers:'worker', activities:'activity', payroll:'payroll', materials:'material', cost:'cost', daily:'daily', decisions:'decision' };
+  const type = typeMap[table];
+  _modalType = type;
+  const form = FORMS[type];
+  $('modal-title').textContent = 'Edit Entry';
+  $('modal-body').innerHTML = form.html();
+  // Pre-fill fields with existing data
+  const r = DB[table][idx];
+  form.prefill(r);
+  $('modal-overlay').classList.add('open');
+}
+
+function setVal(id, val) { const el = $(id); if(el && val !== undefined && val !== null) el.value = val; }
+function setSelect(id, val) {
+  const el = $(id);
+  if (!el) return;
+  for (let o of el.options) { if (o.value == val || o.text == val) { o.selected = true; break; } }
 }
 function autoSave() {
   localStorage.setItem('contractor_db', JSON.stringify(DB));
@@ -708,7 +734,7 @@ function renderProjects() {
     <td><b>${p.id}</b></td><td>${p.name}</td><td>${p.client}</td>
     <td>${p.location}</td><td>${pillStatus(p.status)}</td>
     <td class="muted">${p.startDate}</td><td class="muted">${p.notes||'—'}</td>
-    <td>${delBtn('projects',i)}</td>
+    <td>${rowBtns('projects',i)}</td>
   </tr>`).join('');
 }
 
@@ -721,7 +747,7 @@ function renderWorkers() {
     <td class="r">$${(+w.hourlyRate).toFixed(3)}</td>
     <td>${w.defaultProject}</td><td>${pillStatus(w.status)}</td>
     <td class="muted">${w.hireDate}</td>
-    <td>${delBtn('workers',i)}</td>
+    <td>${rowBtns('workers',i)}</td>
   </tr>`).join('');
 }
 
@@ -729,7 +755,7 @@ function renderActivities() {
   $('badge-activities').textContent = DB.activities.length + ' activities';
   $('tbody-activities').innerHTML = DB.activities.map((a,i) => `<tr>
     <td class="muted">${i+1}</td><td>${a.name}</td><td>${a.group}</td><td>${a.unit}</td>
-    <td>${delBtn('activities',i)}</td>
+    <td>${rowBtns('activities',i)}</td>
   </tr>`).join('');
 }
 
@@ -741,7 +767,7 @@ function renderPayroll() {
     <td class="r">${r.hours}</td>
     <td class="r">$${(+r.hourlyRate).toFixed(3)}</td>
     <td class="r profit">${fmt(r.laborCost)}</td>
-    <td>${delBtn('payroll',i)}</td>
+    <td>${rowBtns('payroll',i)}</td>
   </tr>`).join('') || '<tr><td colspan="9"><div class="empty-state"><div class="icon">💰</div>No payroll entries yet</div></td></tr>';
 }
 
@@ -753,7 +779,7 @@ function renderMaterials() {
     <td class="r">${r.cement}</td><td class="r">${r.steel}</td><td class="r">${r.concrete}</td>
     <td class="r">${r.sand}</td><td class="r">${r.gravel}</td>
     <td class="r">$${r.otherCost}</td><td class="r cost">${fmt(r.totalMaterial)}</td>
-    <td>${delBtn('materials',i)}</td>
+    <td>${rowBtns('materials',i)}</td>
   </tr>`).join('') || '<tr><td colspan="13"><div class="empty-state"><div class="icon">🧱</div>No material entries yet</div></td></tr>';
 }
 
@@ -771,7 +797,7 @@ function renderCost() {
     <td class="r profit">${fmt(r.profit)}</td>
     <td class="r profit">${fmt(r.profitPerUnit)}</td>
     <td class="r">${r.laborHours} h</td>
-    <td>${delBtn('cost',i)}</td>
+    <td>${rowBtns('cost',i)}</td>
   </tr>`).join('') || '<tr><td colspan="15"><div class="empty-state"><div class="icon">📈</div>No cost entries yet</div></td></tr>';
 }
 
@@ -784,7 +810,7 @@ function renderDaily() {
     <td class="r">${r.problemHandling}</td><td class="r">${r.discipline}</td>
     <td class="r">${scoreBar(r.totalScore)}</td>
     <td class="muted">${r.notes||'—'}</td>
-    <td>${delBtn('daily',i)}</td>
+    <td>${rowBtns('daily',i)}</td>
   </tr>`).join('') || '<tr><td colspan="11"><div class="empty-state"><div class="icon">📝</div>No daily entries yet</div></td></tr>';
 }
 
@@ -801,7 +827,7 @@ function renderDecisions() {
       <td class="r"><b>${r.score}</b></td>
       <td>${pillStatus(r.approved==='Yes'?'Active':'Inactive')}</td>
       <td class="muted">${r.followUp||'—'}</td>
-      <td>${delBtn('decisions',i)}</td>
+      <td>${rowBtns('decisions',i)}</td>
     </tr>`;
   }).join('') || '<tr><td colspan="13"><div class="empty-state"><div class="icon">🎯</div>No decisions yet</div></td></tr>';
 }
@@ -830,10 +856,11 @@ const FORMS = {
         <div class="form-group"><label>Start Date</label><input id="f-startDate" type="date"></div>
       </div>
       <div class="form-group"><label>Notes</label><input id="f-notes" placeholder="Optional notes"></div>`,
+    prefill: (r) => { setVal('f-id',r.id); setVal('f-name',r.name); setVal('f-client',r.client); setVal('f-location',r.location); setVal('f-startDate',r.startDate); setVal('f-notes',r.notes); setSelect('f-status',r.status); },
     save: () => {
       const entry = { id:$('f-id').value, name:$('f-name').value, client:$('f-client').value, location:$('f-location').value, status:$('f-status').value, startDate:$('f-startDate').value, notes:$('f-notes').value };
       if (!entry.id||!entry.name) { alert('Code and Name are required'); return false; }
-      DB.projects.push(entry); return true;
+      if (_editIdx >= 0) DB.projects[_editIdx] = entry; else DB.projects.push(entry); return true;
     }
   },
   worker: {
@@ -853,11 +880,12 @@ const FORMS = {
         <div class="form-group"><label>Daily Rate ($/8h)</label><input id="f-dailyRate" type="number" step="0.5" placeholder="25"></div>
         <div class="form-group"><label>Default Project</label><select id="f-defaultProject">${projOptions()}</select></div>
       </div>`,
+    prefill: (r) => { setVal('f-id',r.id); setVal('f-name',r.name); setVal('f-role',r.role); setVal('f-phone',r.phone); setVal('f-dailyRate',r.dailyRate); setVal('f-hireDate',r.hireDate); setSelect('f-status',r.status); setSelect('f-defaultProject',r.defaultProject); },
     save: () => {
       const dr = parseFloat($('f-dailyRate').value)||0;
       const entry = { id:$('f-id').value, name:$('f-name').value, role:$('f-role').value, phone:$('f-phone').value, dailyRate:dr, hourlyRate:+(dr/8).toFixed(4), defaultProject:$('f-defaultProject').value, status:$('f-status').value, hireDate:$('f-hireDate').value };
       if (!entry.id||!entry.name) { alert('ID and Name required'); return false; }
-      DB.workers.push(entry); return true;
+      if (_editIdx >= 0) DB.workers[_editIdx] = entry; else DB.workers.push(entry); return true;
     }
   },
   activity: {
@@ -868,10 +896,11 @@ const FORMS = {
         <div class="form-group"><label>Group</label><select id="f-group"><option>Concrete</option><option>Masonry</option><option>Finishing</option><option>Steel</option><option>Other</option></select></div>
         <div class="form-group"><label>Unit</label><select id="f-unit"><option>m³</option><option>m²</option><option>ton</option><option>m</option><option>No.</option><option>LS</option></select></div>
       </div>`,
+    prefill: (r) => { setVal('f-name',r.name); setSelect('f-group',r.group); setSelect('f-unit',r.unit); },
     save: () => {
       const entry = { name:$('f-name').value, group:$('f-group').value, unit:$('f-unit').value };
       if (!entry.name) { alert('Name required'); return false; }
-      DB.activities.push(entry); return true;
+      if (_editIdx >= 0) DB.activities[_editIdx] = entry; else DB.activities.push(entry); return true;
     }
   },
   payroll: {
@@ -886,13 +915,14 @@ const FORMS = {
         <div class="form-group"><label>Worker</label><select id="f-worker">${wrkOptions()}</select></div>
       </div>
       <div class="form-group"><label>Hours Worked</label><input id="f-hours" type="number" step="0.5" placeholder="8"></div>`,
+    prefill: (r) => { setVal('f-date',r.date); setSelect('f-project',r.project); setSelect('f-activity',r.activity); setSelect('f-worker',r.workerId); setVal('f-hours',r.hours); },
     save: () => {
       const wId = $('f-worker').value;
       const w   = DB.workers.find(x=>x.id===wId);
       const hrs = parseFloat($('f-hours').value)||0;
       const entry = { date:$('f-date').value, project:$('f-project').value, activity:$('f-activity').value, workerId:wId, workerName:w?w.name:'', role:w?w.role:'', hours:hrs, hourlyRate:w?w.hourlyRate:0, laborCost:+(hrs*(w?w.hourlyRate:0)).toFixed(2) };
       if (!entry.date||!hrs) { alert('Date and Hours required'); return false; }
-      DB.payroll.push(entry); return true;
+      if (_editIdx >= 0) DB.payroll[_editIdx] = entry; else DB.payroll.push(entry); return true;
     }
   },
   material: {
@@ -922,10 +952,11 @@ const FORMS = {
         <div class="form-group"><label>Other Cost ($)</label><input id="f-otherCost" type="number" step="1" placeholder="0"></div>
         <div class="form-group"><label>Total Material ($)</label><input id="f-totalMaterial" type="number" step="1" placeholder="0"></div>
       </div>`,
+    prefill: (r) => { setVal('f-date',r.date); setSelect('f-project',r.project); setSelect('f-activity',r.activity); setSelect('f-unit',r.unit); setVal('f-volume',r.volume); setVal('f-cement',r.cement); setVal('f-steel',r.steel); setVal('f-concrete',r.concrete); setVal('f-sand',r.sand); setVal('f-gravel',r.gravel); setVal('f-otherCost',r.otherCost); setVal('f-totalMaterial',r.totalMaterial); },
     save: () => {
       const entry = { date:$('f-date').value, project:$('f-project').value, activity:$('f-activity').value, volume:+$('f-volume').value, unit:$('f-unit').value, cement:+$('f-cement').value, steel:+$('f-steel').value, concrete:+$('f-concrete').value, sand:+$('f-sand').value, gravel:+$('f-gravel').value, otherCost:+$('f-otherCost').value, totalMaterial:+$('f-totalMaterial').value };
       if (!entry.date) { alert('Date required'); return false; }
-      DB.materials.push(entry); return true;
+      if (_editIdx >= 0) DB.materials[_editIdx] = entry; else DB.materials.push(entry); return true;
     }
   },
   cost: {
@@ -952,12 +983,13 @@ const FORMS = {
         <div class="form-group"><label>Revenue ($)</label><input id="f-revenue" type="number" step="0.01" placeholder="0"></div>
       </div>
       <div class="form-group"><label>Labor Hours</label><input id="f-laborHours" type="number" step="0.5" placeholder="0"></div>`,
+    prefill: (r) => { setVal('f-date',r.date); setSelect('f-project',r.project); setSelect('f-activity',r.activity); setSelect('f-status',r.status); setVal('f-volume',r.volume); setSelect('f-unit',r.unit); setVal('f-labor',r.labor); setVal('f-material',r.material); setVal('f-other',r.other); setVal('f-revenue',r.revenue); setVal('f-laborHours',r.laborHours); },
     save: () => {
       const labor=+$('f-labor').value, mat=+$('f-material').value, other=+$('f-other').value, rev=+$('f-revenue').value, vol=+$('f-volume').value;
       const totalCost = labor+mat+other, profit = rev-totalCost, ppu = vol?+(profit/vol).toFixed(4):0;
       const entry = { date:$('f-date').value, project:$('f-project').value, activity:$('f-activity').value, status:$('f-status').value, volume:vol, unit:$('f-unit').value, labor, material:mat, other, totalCost:+totalCost.toFixed(2), revenue:rev, profit:+profit.toFixed(2), profitPerUnit:ppu, laborHours:+$('f-laborHours').value };
       if (!entry.date) { alert('Date required'); return false; }
-      DB.cost.push(entry); return true;
+      if (_editIdx >= 0) DB.cost[_editIdx] = entry; else DB.cost.push(entry); return true;
     }
   },
   daily: {
@@ -981,13 +1013,14 @@ const FORMS = {
         <div class="form-group"><label>Discipline</label><input id="f-discipline" type="number" step="0.1" min="0" max="1" placeholder="1"></div>
       </div>
       <div class="form-group"><label>Notes</label><input id="f-notes" placeholder="What happened today?"></div>`,
+    prefill: (r) => { setVal('f-date',r.date); setSelect('f-project',r.project); setVal('f-mindset',r.mindset); setVal('f-siteControl',r.siteControl); setVal('f-concreteQuality',r.concreteQuality); setVal('f-costControl',r.costControl); setVal('f-problemHandling',r.problemHandling); setVal('f-discipline',r.discipline); setVal('f-notes',r.notes); },
     save: () => {
       const scores = ['mindset','siteControl','concreteQuality','costControl','problemHandling','discipline'];
       const vals = scores.map(s=>parseFloat($('f-'+s).value)||0);
       const avg  = +(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(4);
       const entry = { date:$('f-date').value, project:$('f-project').value, ...Object.fromEntries(scores.map((s,i)=>[s,vals[i]])), totalScore:avg, notes:$('f-notes').value };
       if (!entry.date) { alert('Date required'); return false; }
-      DB.daily.push(entry); return true;
+      if (_editIdx >= 0) DB.daily[_editIdx] = entry; else DB.daily.push(entry); return true;
     }
   },
   decision: {
@@ -1013,25 +1046,27 @@ const FORMS = {
         <div class="form-group"><label>Approved?</label><select id="f-approved"><option>Yes</option><option>No</option></select></div>
       </div>
       <div class="form-group"><label>Follow-up Notes</label><input id="f-followUp" placeholder="Optional follow-up"></div>`,
+    prefill: (r) => { setVal('f-date',r.date); setSelect('f-project',r.project); setSelect('f-activity',r.activity); setVal('f-decision',r.decision); setSelect('f-facts',r.facts); setSelect('f-noEgo',r.noEgo); setSelect('f-numbersOk',r.numbersOk); setSelect('f-worstCase',r.worstCase); setSelect('f-simple',r.simple); setSelect('f-approved',r.approved); setVal('f-followUp',r.followUp); },
     save: () => {
       const checks = ['facts','noEgo','numbersOk','worstCase','simple'];
       const vals   = checks.map(c=>+$('f-'+c).value);
       const score  = +(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2);
       const entry  = { date:$('f-date').value, project:$('f-project').value, activity:$('f-activity').value, decision:$('f-decision').value, ...Object.fromEntries(checks.map((c,i)=>[c,vals[i]])), score, approved:$('f-approved').value, followUp:$('f-followUp').value };
       if (!entry.date||!entry.decision) { alert('Date and Decision required'); return false; }
-      DB.decisions.push(entry); return true;
+      if (_editIdx >= 0) DB.decisions[_editIdx] = entry; else DB.decisions.push(entry); return true;
     }
   }
 };
 
 function openModal(type) {
+  _editIdx = -1;
   _modalType = type;
   const form = FORMS[type];
   $('modal-title').textContent = form.title;
   $('modal-body').innerHTML    = form.html();
   $('modal-overlay').classList.add('open');
 }
-function closeModal() { $('modal-overlay').classList.remove('open'); }
+function closeModal() { _editIdx = -1; $('modal-overlay').classList.remove('open'); }
 function saveModalEntry() {
   const ok = FORMS[_modalType].save();
   if (ok) { closeModal(); renderAll(); autoSave(); }
