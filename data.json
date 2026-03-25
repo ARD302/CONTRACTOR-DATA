@@ -1,1 +1,381 @@
-{}
+{
+  "projects": [
+    {
+      "id": "P001",
+      "name": "Villa A",
+      "client": "Private Client",
+      "location": "Ehden",
+      "status": "Active",
+      "startDate": "2026-03-01",
+      "notes": "Example project"
+    },
+    {
+      "id": "P002",
+      "name": "Villa B",
+      "client": "Private Client",
+      "location": "Zgharta",
+      "status": "Active",
+      "startDate": "2026-03-05",
+      "notes": "Example project"
+    },
+    {
+      "id": "P003",
+      "name": "Hotel Renovation",
+      "client": "Hospitality Client",
+      "location": "Tripoli",
+      "status": "Planning",
+      "startDate": "2026-03-20",
+      "notes": "Example project"
+    }
+  ],
+  "workers": [
+    {
+      "id": "W001",
+      "name": "Ali Hassan",
+      "role": "Steel Fixer",
+      "phone": "03-111111",
+      "dailyRate": 25,
+      "hourlyRate": 3.125,
+      "defaultProject": "P001",
+      "status": "Active",
+      "hireDate": "2025-01-10"
+    },
+    {
+      "id": "W002",
+      "name": "Mahmoud K",
+      "role": "Carpenter",
+      "phone": "03-222222",
+      "dailyRate": 30,
+      "hourlyRate": 3.75,
+      "defaultProject": "P001",
+      "status": "Active",
+      "hireDate": "2025-02-15"
+    },
+    {
+      "id": "W003",
+      "name": "George N",
+      "role": "Labor",
+      "phone": "03-333333",
+      "dailyRate": 20,
+      "hourlyRate": 2.5,
+      "defaultProject": "P002",
+      "status": "Active",
+      "hireDate": "2024-11-01"
+    },
+    {
+      "id": "W004",
+      "name": "Youssef A",
+      "role": "Concrete Finisher",
+      "phone": "03-444444",
+      "dailyRate": 28,
+      "hourlyRate": 3.5,
+      "defaultProject": "P001",
+      "status": "Active",
+      "hireDate": "2025-05-08"
+    },
+    {
+      "id": "W005",
+      "name": "Kenan Sabra",
+      "role": "Foremen",
+      "phone": "81846701",
+      "dailyRate": 33,
+      "hourlyRate": 4.125,
+      "defaultProject": "P001",
+      "status": "Active",
+      "hireDate": "2025-02-25"
+    }
+  ],
+  "activities": [
+    {
+      "name": "Footing",
+      "group": "Concrete",
+      "unit": "m³"
+    },
+    {
+      "name": "Tie Beam",
+      "group": "Concrete",
+      "unit": "m³"
+    },
+    {
+      "name": "Column",
+      "group": "Concrete",
+      "unit": "m³"
+    },
+    {
+      "name": "Beam",
+      "group": "Concrete",
+      "unit": "m³"
+    },
+    {
+      "name": "Slab",
+      "group": "Concrete",
+      "unit": "m³"
+    },
+    {
+      "name": "Retaining Wall",
+      "group": "Concrete",
+      "unit": "m³"
+    },
+    {
+      "name": "Blockwork",
+      "group": "Masonry",
+      "unit": "m²"
+    },
+    {
+      "name": "Plaster",
+      "group": "Finishing",
+      "unit": "m²"
+    },
+    {
+      "name": "Waterproofing",
+      "group": "Finishing",
+      "unit": "m²"
+    },
+    {
+      "name": "Steel Erection",
+      "group": "Steel",
+      "unit": "ton"
+    }
+  ],
+  "payroll": [
+    {
+      "date": "2026-03-20",
+      "project": "P001",
+      "activity": "Slab",
+      "workerId": "W001",
+      "workerName": "Ali Hassan",
+      "role": "Steel Fixer",
+      "hours": 10,
+      "hourlyRate": 3.125,
+      "laborCost": 31.25
+    },
+    {
+      "date": "2026-03-20",
+      "project": "P001",
+      "activity": "Slab",
+      "workerId": "W002",
+      "workerName": "Mahmoud K",
+      "role": "Carpenter",
+      "hours": 9,
+      "hourlyRate": 3.75,
+      "laborCost": 33.75
+    },
+    {
+      "date": "2026-03-20",
+      "project": "P001",
+      "activity": "Slab",
+      "workerId": "W004",
+      "workerName": "Youssef A",
+      "role": "Concrete Finisher",
+      "hours": 8,
+      "hourlyRate": 3.5,
+      "laborCost": 28
+    },
+    {
+      "date": "2026-03-20",
+      "project": "P002",
+      "activity": "Column",
+      "workerId": "W003",
+      "workerName": "George N",
+      "role": "Labor",
+      "hours": 8,
+      "hourlyRate": 2.5,
+      "laborCost": 20
+    },
+    {
+      "date": "2026-03-21",
+      "project": "P001",
+      "activity": "Beam",
+      "workerId": "W001",
+      "workerName": "Ali Hassan",
+      "role": "Steel Fixer",
+      "hours": 4,
+      "hourlyRate": 3.125,
+      "laborCost": 12.5
+    },
+    {
+      "date": "2026-03-21",
+      "project": "P002",
+      "activity": "Column",
+      "workerId": "W001",
+      "workerName": "Ali Hassan",
+      "role": "Steel Fixer",
+      "hours": 4,
+      "hourlyRate": 3.125,
+      "laborCost": 12.5
+    },
+    {
+      "date": "2026-03-21",
+      "project": "P001",
+      "activity": "Beam",
+      "workerId": "W002",
+      "workerName": "Mahmoud K",
+      "role": "Carpenter",
+      "hours": 8,
+      "hourlyRate": 3.75,
+      "laborCost": 30
+    }
+  ],
+  "materials": [
+    {
+      "date": "2026-03-20",
+      "project": "P001",
+      "activity": "Slab",
+      "volume": 45,
+      "unit": "m³",
+      "cement": 414,
+      "steel": 2800,
+      "concrete": 45,
+      "sand": 27,
+      "gravel": 27,
+      "otherCost": 150,
+      "totalMaterial": 3200
+    },
+    {
+      "date": "2026-03-20",
+      "project": "P002",
+      "activity": "Column",
+      "volume": 8,
+      "unit": "m³",
+      "cement": 74,
+      "steel": 950,
+      "concrete": 8,
+      "sand": 4.8,
+      "gravel": 4.8,
+      "otherCost": 60,
+      "totalMaterial": 850
+    },
+    {
+      "date": "2026-03-21",
+      "project": "P001",
+      "activity": "Beam",
+      "volume": 12,
+      "unit": "m³",
+      "cement": 110,
+      "steel": 650,
+      "concrete": 12,
+      "sand": 7.2,
+      "gravel": 7.2,
+      "otherCost": 40,
+      "totalMaterial": 1100
+    }
+  ],
+  "cost": [
+    {
+      "date": "2026-03-20",
+      "project": "P001",
+      "activity": "Slab",
+      "status": "Completed",
+      "volume": 45,
+      "unit": "m³",
+      "labor": 93,
+      "material": 3200,
+      "other": 150,
+      "totalCost": 3443,
+      "revenue": 4500,
+      "profit": 1057,
+      "profitPerUnit": 23.49,
+      "laborHours": 27
+    },
+    {
+      "date": "2026-03-20",
+      "project": "P002",
+      "activity": "Column",
+      "status": "Completed",
+      "volume": 8,
+      "unit": "m³",
+      "labor": 20,
+      "material": 850,
+      "other": 100,
+      "totalCost": 970,
+      "revenue": 1350,
+      "profit": 380,
+      "profitPerUnit": 47.5,
+      "laborHours": 8
+    },
+    {
+      "date": "2026-03-21",
+      "project": "P001",
+      "activity": "Beam",
+      "status": "Completed",
+      "volume": 12,
+      "unit": "m³",
+      "labor": 42.5,
+      "material": 1100,
+      "other": 60,
+      "totalCost": 1202.5,
+      "revenue": 1500,
+      "profit": 297.5,
+      "profitPerUnit": 24.79,
+      "laborHours": 12
+    }
+  ],
+  "daily": [
+    {
+      "date": "2026-03-20",
+      "project": "P001",
+      "mindset": 1,
+      "siteControl": 0.9,
+      "concreteQuality": 0.9,
+      "costControl": 0.8,
+      "problemHandling": 1,
+      "discipline": 0.9,
+      "totalScore": 0.917,
+      "notes": "Slab pour well controlled"
+    },
+    {
+      "date": "2026-03-20",
+      "project": "P002",
+      "mindset": 0.9,
+      "siteControl": 0.8,
+      "concreteQuality": 0.8,
+      "costControl": 0.8,
+      "problemHandling": 0.9,
+      "discipline": 0.9,
+      "totalScore": 0.85,
+      "notes": "Column work acceptable"
+    },
+    {
+      "date": "2026-03-21",
+      "project": "P001",
+      "mindset": 0.9,
+      "siteControl": 0.9,
+      "concreteQuality": 0.8,
+      "costControl": 0.9,
+      "problemHandling": 0.9,
+      "discipline": 0.9,
+      "totalScore": 0.883,
+      "notes": "Beam activity on track"
+    }
+  ],
+  "decisions": [
+    {
+      "date": "2026-03-20",
+      "project": "P001",
+      "activity": "Slab",
+      "decision": "Accepted slightly higher slump after verifying pumpability and finish risk",
+      "facts": 1,
+      "noEgo": 1,
+      "numbersOk": 1,
+      "worstCase": 1,
+      "simple": 1,
+      "score": 1,
+      "approved": "Yes",
+      "followUp": ""
+    },
+    {
+      "date": "2026-03-21",
+      "project": "P002",
+      "activity": "Column",
+      "decision": "Split Ali between 2 projects due to priority",
+      "facts": 1,
+      "noEgo": 1,
+      "numbersOk": 1,
+      "worstCase": 1,
+      "simple": 1,
+      "score": 1,
+      "approved": "Yes",
+      "followUp": ""
+    }
+  ]
+}
