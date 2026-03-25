@@ -89,47 +89,47 @@
     {
       "name": "Footing",
       "group": "Concrete",
-      "unit": "m³"
+      "unit": "mÂ³"
     },
     {
       "name": "Tie Beam",
       "group": "Concrete",
-      "unit": "m³"
+      "unit": "mÂ³"
     },
     {
       "name": "Column",
       "group": "Concrete",
-      "unit": "m³"
+      "unit": "mÂ³"
     },
     {
       "name": "Beam",
       "group": "Concrete",
-      "unit": "m³"
+      "unit": "mÂ³"
     },
     {
       "name": "Slab",
       "group": "Concrete",
-      "unit": "m³"
+      "unit": "mÂ³"
     },
     {
       "name": "Retaining Wall",
       "group": "Concrete",
-      "unit": "m³"
+      "unit": "mÂ³"
     },
     {
       "name": "Blockwork",
       "group": "Masonry",
-      "unit": "m²"
+      "unit": "mÂ²"
     },
     {
       "name": "Plaster",
       "group": "Finishing",
-      "unit": "m²"
+      "unit": "mÂ²"
     },
     {
       "name": "Waterproofing",
       "group": "Finishing",
-      "unit": "m²"
+      "unit": "mÂ²"
     },
     {
       "name": "Steel Erection",
@@ -222,7 +222,7 @@
       "project": "P001",
       "activity": "Slab",
       "volume": 45,
-      "unit": "m³",
+      "unit": "mÂ³",
       "cement": 414,
       "steel": 2800,
       "concrete": 45,
@@ -236,7 +236,7 @@
       "project": "P002",
       "activity": "Column",
       "volume": 8,
-      "unit": "m³",
+      "unit": "mÂ³",
       "cement": 74,
       "steel": 950,
       "concrete": 8,
@@ -250,7 +250,7 @@
       "project": "P001",
       "activity": "Beam",
       "volume": 12,
-      "unit": "m³",
+      "unit": "mÂ³",
       "cement": 110,
       "steel": 650,
       "concrete": 12,
@@ -267,7 +267,7 @@
       "activity": "Slab",
       "status": "Completed",
       "volume": 45,
-      "unit": "m³",
+      "unit": "mÂ³",
       "labor": 93,
       "material": 3200,
       "other": 150,
@@ -283,7 +283,7 @@
       "activity": "Column",
       "status": "Completed",
       "volume": 8,
-      "unit": "m³",
+      "unit": "mÂ³",
       "labor": 20,
       "material": 850,
       "other": 100,
@@ -299,7 +299,7 @@
       "activity": "Beam",
       "status": "Completed",
       "volume": 12,
-      "unit": "m³",
+      "unit": "mÂ³",
       "labor": 42.5,
       "material": 1100,
       "other": 60,
