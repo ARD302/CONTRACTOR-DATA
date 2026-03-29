@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — Contractor Management</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* ── Design tokens (matches main app) ───────────────────────────────── */
+    :root {
+      --bg:          #f5f3ef;
+      --surface:     #ffffff;
+      --border:      #e2ddd6;
+      --border-dark: #c8c0b4;
+      --text:        #1a1714;
+      --muted:       #7a7268;
+      --accent:      #C84B00;
+      --accent-dim:  #a03c00;
+      --success:     #1a8c4e;
+      --error:       #c0392b;
+      --sidebar-bg:  #1a1714;
+      --sidebar-txt: #f5f3ef;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Syne', sans-serif;
+      background: var(--sidebar-bg);
+      color: var(--sidebar-txt);
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    /* ── Card ────────────────────────────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 48px 40px 40px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.35);
+    }
+
+    /* ── Logo / heading ──────────────────────────────────────────────────── */
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 18px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .logo-text {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+    .logo-sub {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ── Tabs (Sign In / Sign Up) ────────────────────────────────────────── */
+    .tabs {
+      display: flex;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 28px;
+      gap: 0;
+    }
+    .tab {
+      flex: 1;
+      padding: 10px 0;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      color: var(--muted);
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: color 0.15s, border-color 0.15s;
+      user-select: none;
+    }
+    .tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    /* ── Form ────────────────────────────────────────────────────────────── */
+    .form-panel { display: none; }
+    .form-panel.active { display: block; }
+
+    .field { margin-bottom: 18px; }
+    .field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .field input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--border-dark);
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      background: var(--bg);
+      color: var(--text);
+      transition: border-color 0.15s, box-shadow 0.15s;
+      outline: none;
+    }
+    .field input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(200,75,0,0.12);
+    }
+    .field input::placeholder { color: var(--muted); }
+
+    /* ── Primary button ──────────────────────────────────────────────────── */
+    .btn-primary {
+      width: 100%;
+      padding: 12px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: background 0.15s, opacity 0.15s;
+    }
+    .btn-primary:hover:not(:disabled) { background: var(--accent-dim); }
+    .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+
+    /* ── Forgot password link ────────────────────────────────────────────── */
+    .forgot {
+      display: block;
+      text-align: right;
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: -10px;
+      margin-bottom: 18px;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .forgot:hover { color: var(--accent); }
+
+    /* ── Status / error message ──────────────────────────────────────────── */
+    .msg {
+      display: none;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 18px;
+    }
+    .msg.error   { background: #fdf0ef; border: 1px solid #e8b4b0; color: var(--error); }
+    .msg.success { background: #eef8f3; border: 1px solid #a8d8be; color: var(--success); }
+    .msg.show    { display: block; }
+
+    /* ── Reset password panel ────────────────────────────────────────────── */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+    .back-link:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <!-- Logo -->
+  <div class="logo">
+    <div class="logo-mark">C</div>
+    <div>
+      <div class="logo-text">Contractor Management</div>
+      <div class="logo-sub">Field Operations System</div>
+    </div>
+  </div>
+
+  <!-- Status message -->
+  <div id="msg" class="msg" role="alert"></div>
+
+  <!-- ── Sign In / Sign Up tabs ── -->
+  <div id="auth-section">
+    <div class="tabs">
+      <div class="tab active" data-tab="signin">Sign In</div>
+      <div class="tab"        data-tab="signup">Sign Up</div>
+    </div>
+
+    <!-- Sign In -->
+    <div id="panel-signin" class="form-panel active">
+      <form id="form-signin" novalidate>
+        <div class="field">
+          <label for="si-email">Email</label>
+          <input id="si-email" type="email" placeholder="you@example.com" autocomplete="email" required />
+        </div>
+        <div class="field">
+          <label for="si-password">Password</label>
+          <input id="si-password" type="password" placeholder="••••••••" autocomplete="current-password" required />
+        </div>
+        <span class="forgot" id="forgot-link">Forgot password?</span>
+        <button class="btn-primary" type="submit" id="btn-signin">Sign In</button>
+      </form>
+    </div>
+
+    <!-- Sign Up -->
+    <div id="panel-signup" class="form-panel">
+      <form id="form-signup" novalidate>
+        <div class="field">
+          <label for="su-name">Full Name</label>
+          <input id="su-name" type="text" placeholder="Ahmad Khaled" autocomplete="name" />
+        </div>
+        <div class="field">
+          <label for="su-company">Company Name</label>
+          <input id="su-company" type="text" placeholder="Al-Ard Contracting" />
+        </div>
+        <div class="field">
+          <label for="su-email">Email</label>
+          <input id="su-email" type="email" placeholder="you@example.com" autocomplete="email" required />
+        </div>
+        <div class="field">
+          <label for="su-password">Password <span style="font-weight:400;text-transform:none">(min 8 chars)</span></label>
+          <input id="su-password" type="password" placeholder="••••••••" autocomplete="new-password" required minlength="8" />
+        </div>
+        <button class="btn-primary" type="submit" id="btn-signup">Create Account</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── Forgot password ── -->
+  <div id="reset-section" style="display:none">
+    <span class="back-link" id="back-to-signin">← Back to sign in</span>
+    <form id="form-reset" novalidate>
+      <div class="field">
+        <label for="reset-email">Email address</label>
+        <input id="reset-email" type="email" placeholder="you@example.com" autocomplete="email" required />
+      </div>
+      <button class="btn-primary" type="submit" id="btn-reset">Send Reset Link</button>
+    </form>
+  </div>
+</div>
+
+<script type="module">
+  import { signIn, signUp, sendPasswordReset, redirectIfAuthenticated } from './src/auth.js';
+
+  // Redirect to app if already logged in
+  await redirectIfAuthenticated();
+
+  // ── DOM refs ──────────────────────────────────────────────────────────────
+  const msgEl        = document.getElementById('msg');
+  const authSection  = document.getElementById('auth-section');
+  const resetSection = document.getElementById('reset-section');
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+  function showMsg(text, type = 'error') {
+    msgEl.textContent = text;
+    msgEl.className   = `msg ${type} show`;
+  }
+  function clearMsg() {
+    msgEl.className = 'msg';
+    msgEl.textContent = '';
+  }
+  function setLoading(btn, loading) {
+    btn.disabled  = loading;
+    btn.textContent = loading ? 'Please wait…' : btn.dataset.label;
+  }
+
+  // Store original labels
+  document.querySelectorAll('.btn-primary').forEach(b => {
+    b.dataset.label = b.textContent;
+  });
+
+  // ── Tabs ──────────────────────────────────────────────────────────────────
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab, .form-panel').forEach(el => el.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(`panel-${tab.dataset.tab}`).classList.add('active');
+      clearMsg();
+    });
+  });
+
+  // ── Forgot / reset toggle ─────────────────────────────────────────────────
+  document.getElementById('forgot-link').addEventListener('click', () => {
+    authSection.style.display  = 'none';
+    resetSection.style.display = 'block';
+    clearMsg();
+  });
+  document.getElementById('back-to-signin').addEventListener('click', () => {
+    resetSection.style.display = 'none';
+    authSection.style.display  = 'block';
+    clearMsg();
+  });
+
+  // ── Sign In ───────────────────────────────────────────────────────────────
+  document.getElementById('form-signin').addEventListener('submit', async e => {
+    e.preventDefault();
+    clearMsg();
+    const btn      = document.getElementById('btn-signin');
+    const email    = document.getElementById('si-email').value.trim();
+    const password = document.getElementById('si-password').value;
+
+    if (!email || !password) return showMsg('Please fill in all fields.');
+
+    setLoading(btn, true);
+    const { error } = await signIn(email, password);
+    setLoading(btn, false);
+
+    if (error) {
+      showMsg(error.message);
+    } else {
+      showMsg('Signing you in…', 'success');
+      window.location.href = '/index.html';
+    }
+  });
+
+  // ── Sign Up ───────────────────────────────────────────────────────────────
+  document.getElementById('form-signup').addEventListener('submit', async e => {
+    e.preventDefault();
+    clearMsg();
+    const btn      = document.getElementById('btn-signup');
+    const email    = document.getElementById('su-email').value.trim();
+    const password = document.getElementById('su-password').value;
+    const fullName = document.getElementById('su-name').value.trim();
+    const company  = document.getElementById('su-company').value.trim();
+
+    if (!email || !password) return showMsg('Email and password are required.');
+    if (password.length < 8) return showMsg('Password must be at least 8 characters.');
+
+    setLoading(btn, true);
+    const { data, error } = await signUp(email, password, { full_name: fullName, company_name: company });
+    setLoading(btn, false);
+
+    if (error) {
+      showMsg(error.message);
+    } else if (data?.user?.identities?.length === 0) {
+      showMsg('An account with this email already exists. Try signing in.', 'error');
+    } else {
+      showMsg('Account created! Check your email to confirm before signing in.', 'success');
+    }
+  });
+
+  // ── Password Reset ────────────────────────────────────────────────────────
+  document.getElementById('form-reset').addEventListener('submit', async e => {
+    e.preventDefault();
+    clearMsg();
+    const btn   = document.getElementById('btn-reset');
+    const email = document.getElementById('reset-email').value.trim();
+
+    if (!email) return showMsg('Enter your email address.');
+
+    setLoading(btn, true);
+    const { error } = await sendPasswordReset(email);
+    setLoading(btn, false);
+
+    if (error) {
+      showMsg(error.message);
+    } else {
+      showMsg('Reset link sent — check your inbox.', 'success');
+    }
+  });
+</script>
+</body>
+</html>
