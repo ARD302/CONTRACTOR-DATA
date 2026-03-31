@@ -2,195 +2,255 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Contractor Control System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Dahdah GC">
+<meta name="theme-color" content="#1a1714">
+<title>Dahdah GC — Contractor System</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root {
-  --bg: #f5f3ef;
-  --surface: #ffffff;
-  --card: #faf9f7;
-  --border: #e2ddd6;
-  --border-dark: #c8c0b4;
-  --text: #1a1714;
-  --muted: #7a7268;
-  --accent: #c84b00;
-  --accent2: #2563a8;
-  --accent3: #1a8c4e;
-  --warn: #d97706;
-  --syne: 'Syne', sans-serif;
-  --mono: 'JetBrains Mono', monospace;
+  --bg: #f5f3ef; --surface: #fff; --card: #faf9f7;
+  --border: #e2ddd6; --border-dark: #c8c0b4;
+  --text: #1a1714; --muted: #7a7268;
+  --accent: #c84b00; --accent2: #2563a8; --accent3: #1a8c4e; --warn: #d97706;
+  --nav-w: 220px; --bottom-nav-h: 64px;
+  --syne: 'Syne', sans-serif; --mono: 'JetBrains Mono', monospace;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--bg); color: var(--text); font-family: var(--syne); font-size: 14px; min-height: 100vh; }
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:var(--syne);font-size:14px;}
 
-/* ── Layout ── */
-.layout { display: flex; min-height: 100vh; }
-nav {
-  width: 220px; min-width: 220px; background: var(--text); color: #f5f3ef;
-  display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; overflow-y: auto;
-}
-.nav-brand { padding: 24px 20px 20px; border-bottom: 1px solid rgba(255,255,255,.1); }
-.nav-brand .title { font-size: 13px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); line-height: 1.3; }
-.nav-brand .sub { font-family: var(--mono); font-size: 9px; color: rgba(255,255,255,.4); margin-top: 4px; letter-spacing: 1px; text-transform: uppercase; }
-.nav-section { padding: 14px 0 4px 20px; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,.25); font-family: var(--mono); }
-.nav-item {
-  display: flex; align-items: center; gap: 9px; padding: 10px 20px; cursor: pointer;
-  transition: background .15s; font-size: 12px; font-weight: 600; letter-spacing: .5px;
-  color: rgba(255,255,255,.65); border-left: 3px solid transparent;
-}
-.nav-item:hover { background: rgba(255,255,255,.06); color: #fff; }
-.nav-item.active { background: rgba(200,75,0,.15); color: #fff; border-left-color: var(--accent); }
-.nav-item .icon { font-size: 14px; opacity: .8; }
+/* ══ LAYOUT ══ */
+.layout{display:flex;height:100vh;overflow:hidden;}
 
-/* ── Config panel ── */
-.config-bar {
-  background: #1e3a5f; color: #fff; padding: 10px 20px;
-  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
-  border-bottom: 2px solid var(--accent2); font-family: var(--mono); font-size: 11px;
+/* ══ SIDEBAR (desktop) ══ */
+.sidebar{
+  width:var(--nav-w);min-width:var(--nav-w);background:var(--text);
+  display:flex;flex-direction:column;height:100vh;overflow-y:auto;flex-shrink:0;
+  transition:transform .25s;z-index:200;
 }
-.config-bar label { color: rgba(255,255,255,.6); white-space: nowrap; }
-.config-bar input {
-  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2);
-  color: #fff; padding: 4px 10px; border-radius: 4px; font-family: var(--mono); font-size: 11px;
-  width: 220px; outline: none;
+.nav-brand{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.1);}
+.nav-brand .co{font-size:14px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);line-height:1.2;}
+.nav-brand .sub{font-family:var(--mono);font-size:9px;color:rgba(255,255,255,.35);margin-top:3px;letter-spacing:1px;}
+.nav-sec{padding:12px 0 3px 18px;font-size:8px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.22);font-family:var(--mono);}
+.nav-item{
+  display:flex;align-items:center;gap:9px;padding:9px 18px;cursor:pointer;
+  transition:background .12s;font-size:12px;font-weight:600;letter-spacing:.4px;
+  color:rgba(255,255,255,.6);border-left:3px solid transparent;user-select:none;
 }
-.config-bar input:focus { border-color: var(--accent2); }
-.config-bar input::placeholder { color: rgba(255,255,255,.3); }
-.btn-config {
-  background: var(--accent2); color: #fff; border: none; padding: 5px 14px;
-  border-radius: 4px; cursor: pointer; font-family: var(--mono); font-size: 11px;
-  font-weight: 500; white-space: nowrap;
-}
-.btn-config:hover { background: #1e50a0; }
-.status-dot { width: 8px; height: 8px; border-radius: 50%; background: #aaa; flex-shrink: 0; }
-.status-dot.ok { background: #4caf50; }
-.status-dot.err { background: #f44336; }
-.status-dot.saving { background: var(--warn); animation: pulse 1s infinite; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-#status-text { color: rgba(255,255,255,.6); font-size: 10px; }
+.nav-item:hover{background:rgba(255,255,255,.05);color:#fff;}
+.nav-item.active{background:rgba(200,75,0,.18);color:#fff;border-left-color:var(--accent);}
+.nav-item .ic{font-size:15px;flex-shrink:0;}
 
-/* ── Main ── */
-.main { flex: 1; display: flex; flex-direction: column; overflow-x: hidden; }
-.content { padding: 32px 36px; flex: 1; }
-.page { display: none; animation: fadeIn .2s ease; }
-.page.active { display: block; }
-@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+/* ══ MAIN ══ */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
 
-.page-header {
-  display: flex; align-items: flex-end; justify-content: space-between;
-  margin-bottom: 28px; padding-bottom: 16px; border-bottom: 2px solid var(--border-dark);
-  flex-wrap: wrap; gap: 10px;
+/* ══ CONFIG BAR ══ */
+.config-bar{
+  background:#1e3a5f;color:#fff;padding:8px 16px;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;flex-shrink:0;
+  border-bottom:2px solid var(--accent2);font-family:var(--mono);font-size:11px;
 }
-.page-header h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
-.page-header .tag {
-  font-family: var(--mono); font-size: 10px; background: var(--accent);
-  color: #fff; padding: 3px 10px; border-radius: 3px; letter-spacing: 1px;
+.config-bar label{color:rgba(255,255,255,.55);white-space:nowrap;}
+.config-bar input{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  color:#fff;padding:3px 8px;border-radius:4px;font-family:var(--mono);font-size:11px;
+  width:190px;outline:none;
 }
-.page-header .actions { display: flex; gap: 8px; align-items: center; }
-
-/* ── Buttons ── */
-.btn {
-  padding: 7px 16px; border-radius: 6px; border: none; cursor: pointer;
-  font-family: var(--syne); font-size: 12px; font-weight: 700; letter-spacing: .5px;
-  transition: all .15s; display: inline-flex; align-items: center; gap: 6px;
+.config-bar input:focus{border-color:var(--accent2);}
+.config-bar input::placeholder{color:rgba(255,255,255,.28);}
+.btn-cfg{
+  background:var(--accent2);color:#fff;border:none;padding:4px 12px;
+  border-radius:4px;cursor:pointer;font-family:var(--mono);font-size:11px;font-weight:500;white-space:nowrap;
 }
-.btn-primary { background: var(--accent); color: #fff; }
-.btn-primary:hover { background: #a83d00; }
-.btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border-dark); }
-.btn-secondary:hover { background: var(--bg); }
-.btn-danger { background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; }
-.btn-danger:hover { background: #fecaca; }
-.btn-sm { padding: 4px 10px; font-size: 11px; }
+.status-dot{width:8px;height:8px;border-radius:50%;background:#aaa;flex-shrink:0;}
+.status-dot.ok{background:#4caf50;}.status-dot.err{background:#f44336;}
+.status-dot.saving{background:var(--warn);animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+#status-text{color:rgba(255,255,255,.5);font-size:10px;}
 
-/* ── KPI ── */
-.kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(155px, 1fr)); gap: 14px; margin-bottom: 28px; }
-.kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; position: relative; overflow: hidden; }
-.kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--accent); }
-.kpi-card.blue::before { background: var(--accent2); }
-.kpi-card.green::before { background: var(--accent3); }
-.kpi-card.warn::before { background: var(--warn); }
-.kpi-card label { display:block; font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); margin-bottom:8px; font-family:var(--mono); }
-.kpi-card .val { font-family:var(--mono); font-size:20px; font-weight:500; color:var(--text); }
-.kpi-card .val.green { color:var(--accent3); }
-.kpi-card .val.red { color:var(--accent); }
-.kpi-card .val.blue { color:var(--accent2); }
+/* ══ CONTENT AREA ══ */
+.content{flex:1;overflow-y:auto;padding:24px 28px;padding-bottom:calc(var(--bottom-nav-h) + var(--safe-bottom) + 16px);}
+.page{display:none;animation:fadeIn .18s ease;}
+.page.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── Tables ── */
-.table-wrap { background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-bottom:24px; }
-.table-header { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid var(--border); background:var(--card); gap:10px; flex-wrap:wrap; }
-.table-header h3 { font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); }
-.table-header .badge { font-family:var(--mono); font-size:10px; background:var(--bg); border:1px solid var(--border); padding:2px 8px; border-radius:20px; color:var(--muted); }
-.scroll-wrap { overflow-x: auto; }
-table { width:100%; border-collapse:collapse; font-family:var(--mono); font-size:12px; }
-thead th { background:#f0ece6; padding:9px 12px; text-align:left; font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); white-space:nowrap; border-bottom:1px solid var(--border); }
-thead th.r { text-align:right; }
-tbody tr { border-bottom:1px solid var(--border); transition:background .12s; }
-tbody tr:last-child { border-bottom:none; }
-tbody tr:hover { background:rgba(200,75,0,.03); }
-td { padding:8px 12px; color:var(--text); }
-td.r { text-align:right; }
-td.muted { color:var(--muted); }
-td.profit { color:var(--accent3); font-weight:500; }
-td.cost { color:var(--accent); }
-td.revenue { color:var(--accent2); }
-.pill { display:inline-block; padding:2px 8px; border-radius:20px; font-size:10px; font-weight:600; letter-spacing:.5px; }
-.pill.active { background:#dcfce7; color:#15803d; }
-.pill.planning { background:#fef3c7; color:#b45309; }
-.pill.completed { background:#e0f2fe; color:#0369a1; }
-.pill.inactive { background:#f3f4f6; color:#6b7280; }
+/* ══ PAGE HEADER ══ */
+.page-header{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  margin-bottom:22px;padding-bottom:14px;border-bottom:2px solid var(--border-dark);
+  flex-wrap:wrap;gap:10px;
+}
+.page-header h1{font-size:24px;font-weight:800;letter-spacing:-.5px;}
+.tag{font-family:var(--mono);font-size:10px;background:var(--accent);color:#fff;padding:3px 9px;border-radius:3px;letter-spacing:1px;}
+.page-header .acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+
+/* ══ BUTTONS ══ */
+.btn{
+  padding:7px 15px;border-radius:7px;border:none;cursor:pointer;
+  font-family:var(--syne);font-size:12px;font-weight:700;letter-spacing:.4px;
+  transition:all .13s;display:inline-flex;align-items:center;gap:5px;
+}
+.btn-primary{background:var(--accent);color:#fff;}.btn-primary:hover{background:#a83d00;}
+.btn-secondary{background:var(--surface);color:var(--text);border:1px solid var(--border-dark);}
+.btn-secondary:hover{background:var(--bg);}
+.btn-danger{background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;}
+.btn-sm{padding:4px 9px;font-size:11px;}
+
+/* ══ KPI GRID ══ */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-bottom:22px;}
+.kpi-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:14px 16px;position:relative;overflow:hidden;
+}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent);}
+.kpi-card.blue::before{background:var(--accent2);}
+.kpi-card.green::before{background:var(--accent3);}
+.kpi-card.warn::before{background:var(--warn);}
+.kpi-card label{display:block;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-family:var(--mono);}
+.kpi-card .val{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--text);}
+.kpi-card .val.green{color:var(--accent3);}.kpi-card .val.red{color:var(--accent);}.kpi-card .val.blue{color:var(--accent2);}
+
+/* ══ CHARTS ══ */
+.charts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:22px;}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;}
+.chart-card h4{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;font-family:var(--mono);}
+.chart-wrap{position:relative;height:200px;}
+
+/* ══ TABLES ══ */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px;}
+.table-header{display:flex;align-items:center;justify-content:space-between;padding:11px 15px;border-bottom:1px solid var(--border);background:var(--card);gap:8px;flex-wrap:wrap;}
+.table-header h3{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);}
+.badge{font-family:var(--mono);font-size:10px;background:var(--bg);border:1px solid var(--border);padding:2px 7px;border-radius:20px;color:var(--muted);}
+.scroll-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px;}
+thead th{background:#f0ece6;padding:8px 11px;text-align:left;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);white-space:nowrap;border-bottom:1px solid var(--border);}
+thead th.r{text-align:right;}
+tbody tr{border-bottom:1px solid var(--border);transition:background .1s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:rgba(200,75,0,.03);}
+td{padding:8px 11px;color:var(--text);}
+td.r{text-align:right;}td.muted{color:var(--muted);}
+td.profit{color:var(--accent3);font-weight:500;}td.cost{color:var(--accent);}td.revenue{color:var(--accent2);}
+.pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;letter-spacing:.4px;}
+.pill.active{background:#dcfce7;color:#15803d;}.pill.planning{background:#fef3c7;color:#b45309;}
+.pill.completed{background:#e0f2fe;color:#0369a1;}.pill.inactive{background:#f3f4f6;color:#6b7280;}
+.pill.inprogress{background:#fef3c7;color:#b45309;}.pill.onhold{background:#f3f4f6;color:#6b7280;}
 
 /* Score bar */
-.score-bar-wrap { display:flex; align-items:center; gap:8px; }
-.score-bar { flex:1; height:6px; background:var(--border); border-radius:3px; overflow:hidden; min-width:60px; }
-.score-bar-fill { height:100%; border-radius:3px; background:var(--accent3); }
-.score-bar-fill.warn { background:var(--warn); }
-.score-val { font-family:var(--mono); font-size:11px; color:var(--muted); min-width:28px; text-align:right; }
+.sb-wrap{display:flex;align-items:center;gap:7px;}
+.sb{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;min-width:55px;}
+.sb-fill{height:100%;border-radius:3px;background:var(--accent3);}
+.sb-fill.warn{background:var(--warn);}
+.sb-val{font-family:var(--mono);font-size:11px;color:var(--muted);min-width:26px;text-align:right;}
 
-/* ── Modal ── */
-.modal-overlay {
-  display:none; position:fixed; inset:0; background:rgba(0,0,0,.5);
-  z-index:1000; align-items:center; justify-content:center; padding:20px;
-}
-.modal-overlay.open { display:flex; }
-.modal {
-  background:var(--surface); border-radius:12px; width:100%; max-width:560px;
-  max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,.3);
-}
-.modal-header {
-  padding:20px 24px 16px; border-bottom:1px solid var(--border);
-  display:flex; align-items:center; justify-content:space-between;
-}
-.modal-header h2 { font-size:16px; font-weight:800; }
-.modal-close { background:none; border:none; cursor:pointer; font-size:20px; color:var(--muted); line-height:1; }
-.modal-body { padding:20px 24px; display:flex; flex-direction:column; gap:14px; }
-.modal-footer { padding:16px 24px; border-top:1px solid var(--border); display:flex; gap:10px; justify-content:flex-end; }
-.form-group { display:flex; flex-direction:column; gap:5px; }
-.form-group label { font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--muted); font-family:var(--mono); }
-.form-group input, .form-group select, .form-group textarea {
-  border:1px solid var(--border-dark); border-radius:6px; padding:9px 12px;
-  font-family:var(--mono); font-size:12px; color:var(--text); background:var(--surface); outline:none;
-  transition:border-color .15s;
-}
-.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--accent2); }
-.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+/* ══ ACTIVITY CARDS ══ */
+.act-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:11px;margin-bottom:20px;}
+.act-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:13px 15px;}
+.act-card .act-name{font-size:12px;font-weight:700;margin-bottom:7px;color:var(--text);}
+.act-card .act-row{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:2px;}
+.act-card .act-row .pos{color:var(--accent3);}.act-card .act-row .neg{color:var(--accent);}
 
-/* ── Empty state ── */
-.empty-state { text-align:center; padding:40px 20px; color:var(--muted); font-family:var(--mono); font-size:12px; }
-.empty-state .icon { font-size:32px; margin-bottom:10px; }
+/* ══ FILTER BAR ══ */
+.filter-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center;}
+.filter-bar select,.filter-bar input{
+  background:var(--surface);border:1px solid var(--border-dark);
+  border-radius:6px;padding:6px 10px;font-family:var(--mono);font-size:11px;
+  color:var(--text);outline:none;
+}
+.filter-bar label{font-size:11px;color:var(--muted);font-family:var(--mono);}
 
-/* ── Dashboard activity cards ── */
-.activity-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; margin-bottom:24px; }
-.activity-card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:14px 16px; }
-.activity-card .act-name { font-size:12px; font-weight:700; margin-bottom:8px; }
-.activity-card .act-row { display:flex; justify-content:space-between; font-family:var(--mono); font-size:11px; color:var(--muted); margin-bottom:3px; }
-.activity-card .act-row .pos { color:var(--accent3); }
-.activity-card .act-row .neg { color:var(--accent); }
+/* ══ MODAL ══ */
+.modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);
+  z-index:1000;align-items:center;justify-content:center;padding:16px;
+}
+.modal-overlay.open{display:flex;}
+.modal{
+  background:var(--surface);border-radius:12px;width:100%;max-width:540px;
+  max-height:92vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);
+}
+.modal-header{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.modal-header h2{font-size:15px;font-weight:800;}
+.modal-close{background:none;border:none;cursor:pointer;font-size:22px;color:var(--muted);line-height:1;}
+.modal-body{padding:18px 22px;display:flex;flex-direction:column;gap:13px;}
+.modal-footer{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:9px;justify-content:flex-end;}
+.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-group label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-family:var(--mono);}
+.form-group input,.form-group select,.form-group textarea{
+  border:1px solid var(--border-dark);border-radius:6px;padding:9px 11px;
+  font-family:var(--mono);font-size:12px;color:var(--text);background:var(--surface);outline:none;transition:border-color .14s;
+}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--accent2);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
 
-/* ── Inline editable ── */
-.editable-row td { position:relative; }
-.row-actions { display:flex; gap:4px; opacity:0; transition:opacity .15s; }
-tr:hover .row-actions { opacity:1; }
+/* ══ EMPTY STATE ══ */
+.empty-state{text-align:center;padding:36px 20px;color:var(--muted);font-family:var(--mono);font-size:12px;}
+.empty-state .ic{font-size:30px;margin-bottom:9px;}
+
+/* ══ BOTTOM NAV (mobile) ══ */
+.bottom-nav{
+  display:none;position:fixed;bottom:0;left:0;right:0;
+  background:var(--text);border-top:1px solid rgba(255,255,255,.1);
+  padding-bottom:var(--safe-bottom);z-index:300;
+}
+.bn-items{display:flex;height:var(--bottom-nav-h);}
+.bn-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;cursor:pointer;color:rgba(255,255,255,.45);transition:color .12s;
+  font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;font-family:var(--syne);
+  border:none;background:none;-webkit-tap-highlight-color:transparent;
+}
+.bn-item .bn-ic{font-size:20px;line-height:1;}
+.bn-item.active{color:var(--accent);}
+
+/* ══ MORE MENU (mobile) ══ */
+.more-menu{
+  display:none;position:fixed;bottom:calc(var(--bottom-nav-h) + var(--safe-bottom));
+  left:0;right:0;background:var(--text);border-top:1px solid rgba(255,255,255,.1);
+  z-index:299;padding:8px 0;
+}
+.more-menu.open{display:block;}
+.mm-item{
+  display:flex;align-items:center;gap:12px;padding:11px 24px;
+  color:rgba(255,255,255,.7);cursor:pointer;font-size:13px;font-weight:600;
+  transition:background .1s;
+}
+.mm-item:hover,.mm-item.active{background:rgba(200,75,0,.15);color:#fff;}
+.mm-item .ic{font-size:16px;}
+
+/* ══ SECTION TABS ══ */
+.section-tabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap;}
+.stab{
+  padding:5px 14px;border-radius:20px;border:1px solid var(--border-dark);
+  font-size:11px;font-weight:700;cursor:pointer;font-family:var(--mono);
+  color:var(--muted);background:var(--surface);transition:all .12s;
+}
+.stab.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:768px){
+  .sidebar{display:none;}
+  .bottom-nav{display:block;}
+  .content{padding:16px 14px;padding-bottom:calc(var(--bottom-nav-h) + var(--safe-bottom) + 16px);}
+  .config-bar{padding:6px 12px;gap:6px;}
+  .config-bar input{width:130px;}
+  .kpi-grid{grid-template-columns:repeat(2,1fr);gap:9px;}
+  .charts-grid{grid-template-columns:1fr;}
+  .form-row{grid-template-columns:1fr;}
+  .page-header h1{font-size:20px;}
+  .btn{padding:8px 14px;font-size:13px;}
+  .btn-sm{padding:6px 10px;font-size:12px;}
+  td{padding:10px 8px;}
+  .modal{max-height:85vh;}
+}
+@media(min-width:769px){
+  .content{padding-bottom:24px;}
+}
 </style>
 </head>
 <body>
@@ -205,261 +265,236 @@ tr:hover .row-actions { opacity:1; }
     <div class="modal-body" id="modal-body"></div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-primary" id="modal-save-btn" onclick="saveModalEntry()">Save Entry</button>
+      <button class="btn btn-primary" onclick="saveModalEntry()">Save Entry</button>
     </div>
   </div>
 </div>
 
+<!-- More menu (mobile) -->
+<div class="more-menu" id="more-menu">
+  <div class="mm-item" onclick="showMobile('materials');toggleMore()"><span class="ic">🧱</span>Material Log</div>
+  <div class="mm-item" onclick="showMobile('cost');toggleMore()"><span class="ic">📈</span>Cost Tracking</div>
+  <div class="mm-item" onclick="showMobile('daily');toggleMore()"><span class="ic">📝</span>Daily Log</div>
+  <div class="mm-item" onclick="showMobile('decisions');toggleMore()"><span class="ic">🎯</span>Decision Log</div>
+  <div class="mm-item" onclick="showMobile('projects');toggleMore()"><span class="ic">🏗️</span>Projects</div>
+  <div class="mm-item" onclick="showMobile('workers');toggleMore()"><span class="ic">👷</span>Workers</div>
+  <div class="mm-item" onclick="showMobile('activities');toggleMore()"><span class="ic">⚙️</span>Activity List</div>
+  <div class="mm-item" onclick="showMobile('settings');toggleMore()"><span class="ic">🔧</span>GitHub Setup</div>
+</div>
+
 <div class="layout">
 
-<!-- ── Sidebar ── -->
-<nav>
+<!-- ══ SIDEBAR ══ -->
+<nav class="sidebar">
   <div class="nav-brand">
-    <div class="title">Contractor<br>Control</div>
-    <div class="sub">Dahdah GC · v2.0</div>
+    <div class="co">Dahdah GC</div>
+    <div class="sub">Contractor System · v3.0</div>
   </div>
-  <div class="nav-section">Overview</div>
-  <div class="nav-item active" onclick="show('dashboard',this)"><span class="icon">📊</span> Dashboard</div>
-  <div class="nav-item" onclick="show('project-summary',this)"><span class="icon">📋</span> Project Summary</div>
-  <div class="nav-section">Setup</div>
-  <div class="nav-item" onclick="show('projects',this)"><span class="icon">🏗️</span> Projects</div>
-  <div class="nav-item" onclick="show('workers',this)"><span class="icon">👷</span> Workers</div>
-  <div class="nav-item" onclick="show('activities',this)"><span class="icon">⚙️</span> Activity List</div>
-  <div class="nav-section">Daily Ops</div>
-  <div class="nav-item" onclick="show('payroll',this)"><span class="icon">💰</span> Payroll Log</div>
-  <div class="nav-item" onclick="show('materials',this)"><span class="icon">🧱</span> Material Log</div>
-  <div class="nav-item" onclick="show('cost',this)"><span class="icon">📈</span> Cost Tracking</div>
-  <div class="nav-item" onclick="show('daily',this)"><span class="icon">📝</span> Daily Log</div>
-  <div class="nav-item" onclick="show('decisions',this)"><span class="icon">🎯</span> Decision Log</div>
-  <div class="nav-section">Settings</div>
-  <div class="nav-item" onclick="show('settings',this)"><span class="icon">⚙️</span> GitHub Setup</div>
+  <div class="nav-sec">Overview</div>
+  <div class="nav-item active" onclick="show('dashboard',this)"><span class="ic">📊</span>Dashboard</div>
+  <div class="nav-item" onclick="show('project-summary',this)"><span class="ic">📋</span>Project Summary</div>
+  <div class="nav-sec">Setup</div>
+  <div class="nav-item" onclick="show('projects',this)"><span class="ic">🏗️</span>Projects</div>
+  <div class="nav-item" onclick="show('workers',this)"><span class="ic">👷</span>Workers</div>
+  <div class="nav-item" onclick="show('activities',this)"><span class="ic">⚙️</span>Activity List</div>
+  <div class="nav-sec">Daily Ops</div>
+  <div class="nav-item" onclick="show('payroll',this)"><span class="ic">💰</span>Payroll Log</div>
+  <div class="nav-item" onclick="show('materials',this)"><span class="ic">🧱</span>Material Log</div>
+  <div class="nav-item" onclick="show('cost',this)"><span class="ic">📈</span>Cost Tracking</div>
+  <div class="nav-item" onclick="show('daily',this)"><span class="ic">📝</span>Daily Log</div>
+  <div class="nav-item" onclick="show('decisions',this)"><span class="ic">🎯</span>Decision Log</div>
+  <div class="nav-sec">Settings</div>
+  <div class="nav-item" onclick="show('settings',this)"><span class="ic">🔧</span>GitHub Setup</div>
 </nav>
 
-<!-- ── Main ── -->
+<!-- ══ MAIN ══ -->
 <div class="main">
 
   <!-- Config bar -->
   <div class="config-bar">
     <div class="status-dot" id="status-dot"></div>
-    <span id="status-text">Not connected — configure GitHub below</span>
-    <label>Token:</label>
-    <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
-    <label>Repo:</label>
-    <input type="text" id="gh-repo" placeholder="username/repo-name">
-    <button class="btn-config" onclick="saveConfig()">Connect</button>
-    <button class="btn-config" onclick="loadFromGitHub()" style="background:#1a8c4e">↓ Load</button>
-    <button class="btn-config" onclick="saveToGitHub()" style="background:var(--accent)">↑ Save</button>
+    <span id="status-text">Not connected</span>
+    <label>Token:</label><input type="password" id="gh-token" placeholder="ghp_xxxx">
+    <label>Repo:</label><input type="text" id="gh-repo" placeholder="user/repo">
+    <button class="btn-cfg" onclick="saveConfig()">Connect</button>
+    <button class="btn-cfg" onclick="loadFromGitHub()" style="background:#1a8c4e">↓ Load</button>
+    <button class="btn-cfg" onclick="saveToGitHub()" style="background:var(--accent)">↑ Save</button>
   </div>
 
   <div class="content">
 
-    <!-- DASHBOARD -->
+    <!-- ══ DASHBOARD ══ -->
     <div id="page-dashboard" class="page active">
-      <div class="page-header">
-        <h1>Dashboard</h1>
-        <span class="tag">LIVE SUMMARY</span>
-      </div>
+      <div class="page-header"><h1>Dashboard</h1><span class="tag">LIVE</span></div>
       <div class="kpi-grid" id="kpi-grid"></div>
-      <h3 style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;font-family:var(--mono);">Activity Breakdown (Cost Tracking)</h3>
-      <div class="activity-grid" id="activity-cards"></div>
+      <div class="charts-grid">
+        <div class="chart-card"><h4>Revenue vs Cost vs Profit</h4><div class="chart-wrap"><canvas id="chart-rcp"></canvas></div></div>
+        <div class="chart-card"><h4>Profit by Activity</h4><div class="chart-wrap"><canvas id="chart-activity"></canvas></div></div>
+        <div class="chart-card"><h4>Labor Hours by Project</h4><div class="chart-wrap"><canvas id="chart-hours"></canvas></div></div>
+        <div class="chart-card"><h4>Daily Score Trend</h4><div class="chart-wrap"><canvas id="chart-score"></canvas></div></div>
+      </div>
+      <h3 style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;font-family:var(--mono);">Activity Breakdown</h3>
+      <div class="act-grid" id="activity-cards"></div>
     </div>
 
-    <!-- PROJECT SUMMARY -->
+    <!-- ══ PROJECT SUMMARY ══ -->
     <div id="page-project-summary" class="page">
-      <div class="page-header"><h1>Project Summary</h1><span class="tag">AUTO-CALCULATED</span></div>
+      <div class="page-header"><h1>Project Summary</h1><span class="tag">AUTO</span></div>
       <div class="table-wrap">
         <div class="table-header"><h3>All Projects</h3></div>
-        <div class="scroll-wrap">
-          <table>
-            <thead><tr>
-              <th>Code</th><th>Name</th><th class="r">Revenue</th><th class="r">Cost</th>
-              <th class="r">Profit</th><th class="r">Volume</th><th class="r">Profit/Unit</th>
-              <th class="r">Labor Hrs</th><th class="r">Avg Score</th>
-            </tr></thead>
-            <tbody id="tbody-project-summary"></tbody>
-          </table>
-        </div>
+        <div class="scroll-wrap"><table>
+          <thead><tr><th>Code</th><th>Name</th><th class="r">Revenue</th><th class="r">Cost</th><th class="r">Profit</th><th class="r">Volume</th><th class="r">Profit/Unit</th><th class="r">Labor Hrs</th><th class="r">Avg Score</th></tr></thead>
+          <tbody id="tbody-project-summary"></tbody>
+        </table></div>
       </div>
     </div>
 
-    <!-- PROJECTS -->
+    <!-- ══ PROJECTS ══ -->
     <div id="page-projects" class="page">
-      <div class="page-header">
-        <h1>Projects</h1>
-        <div class="actions">
-          <span class="tag">SETUP</span>
-          <button class="btn btn-primary" onclick="openModal('project')">+ Add Project</button>
-        </div>
-      </div>
+      <div class="page-header"><h1>Projects</h1><div class="acts"><span class="tag">SETUP</span><button class="btn btn-primary" onclick="openModal('project')">+ Add</button></div></div>
       <div class="table-wrap">
-        <div class="table-header"><h3>Project Registry</h3><span class="badge" id="badge-projects">0</span></div>
-        <div class="scroll-wrap">
-          <table>
-            <thead><tr><th>Code</th><th>Name</th><th>Client</th><th>Location</th><th>Status</th><th>Start Date</th><th>Notes</th><th></th></tr></thead>
-            <tbody id="tbody-projects"></tbody>
-          </table>
-        </div>
+        <div class="table-header"><h3>Registry</h3><span class="badge" id="badge-projects">0</span></div>
+        <div class="scroll-wrap"><table>
+          <thead><tr><th>Code</th><th>Name</th><th>Client</th><th>Location</th><th>Status</th><th>Start</th><th>Notes</th><th></th></tr></thead>
+          <tbody id="tbody-projects"></tbody>
+        </table></div>
       </div>
     </div>
 
-    <!-- WORKERS -->
+    <!-- ══ WORKERS ══ -->
     <div id="page-workers" class="page">
-      <div class="page-header">
-        <h1>Workers</h1>
-        <div class="actions">
-          <span class="tag">SETUP</span>
-          <button class="btn btn-primary" onclick="openModal('worker')">+ Add Worker</button>
-        </div>
+      <div class="page-header"><h1>Workers</h1><div class="acts"><span class="tag">SETUP</span><button class="btn btn-primary" onclick="openModal('worker')">+ Add</button></div></div>
+      <div class="section-tabs">
+        <div class="stab active" onclick="filterWorkers('all',this)">All</div>
+        <div class="stab" onclick="filterWorkers('Active',this)">Active</div>
+        <div class="stab" onclick="filterWorkers('Inactive',this)">Inactive</div>
       </div>
       <div class="table-wrap">
-        <div class="table-header"><h3>Worker Registry</h3><span class="badge" id="badge-workers">0</span></div>
-        <div class="scroll-wrap">
-          <table>
-            <thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Phone</th><th class="r">Daily Rate</th><th class="r">Hourly Rate</th><th>Default Project</th><th>Status</th><th>Hire Date</th><th></th></tr></thead>
-            <tbody id="tbody-workers"></tbody>
-          </table>
-        </div>
+        <div class="table-header"><h3>Registry</h3><span class="badge" id="badge-workers">0</span></div>
+        <div class="scroll-wrap"><table>
+          <thead><tr><th>ID</th><th>Name</th><th>Role</th><th>Phone</th><th class="r">Daily $</th><th class="r">Hourly $</th><th>Project</th><th>Status</th><th></th></tr></thead>
+          <tbody id="tbody-workers"></tbody>
+        </table></div>
       </div>
     </div>
 
-    <!-- ACTIVITIES -->
+    <!-- ══ ACTIVITIES ══ -->
     <div id="page-activities" class="page">
-      <div class="page-header">
-        <h1>Activity List</h1>
-        <div class="actions">
-          <span class="tag">SETUP</span>
-          <button class="btn btn-primary" onclick="openModal('activity')">+ Add Activity</button>
-        </div>
+      <div class="page-header"><h1>Activity List</h1><div class="acts"><span class="tag">SETUP</span><button class="btn btn-primary" onclick="openModal('activity')">+ Add</button></div></div>
+      <div class="section-tabs">
+        <div class="stab active" onclick="filterActivities('all',this)">All</div>
+        <div class="stab" onclick="filterActivities('Concrete',this)">Concrete</div>
+        <div class="stab" onclick="filterActivities('Masonry',this)">Masonry</div>
+        <div class="stab" onclick="filterActivities('Finishing',this)">Finishing</div>
+        <div class="stab" onclick="filterActivities('Steel',this)">Steel</div>
       </div>
       <div class="table-wrap">
-        <div class="table-header"><h3>Defined Activities</h3><span class="badge" id="badge-activities">0</span></div>
-        <table>
-          <thead><tr><th>#</th><th>Activity</th><th>Group</th><th>Unit</th><th></th></tr></thead>
-          <tbody id="tbody-activities"></tbody>
-        </table>
+        <div class="table-header"><h3>Activities</h3><span class="badge" id="badge-activities">0</span></div>
+        <table><thead><tr><th>#</th><th>Activity</th><th>Group</th><th>Unit</th><th></th></tr></thead>
+        <tbody id="tbody-activities"></tbody></table>
       </div>
     </div>
 
-    <!-- PAYROLL -->
+    <!-- ══ PAYROLL ══ -->
     <div id="page-payroll" class="page">
-      <div class="page-header">
-        <h1>Payroll Log</h1>
-        <div class="actions">
-          <span class="tag">DAILY INPUT</span>
-          <button class="btn btn-primary" onclick="openModal('payroll')">+ Add Entry</button>
-        </div>
+      <div class="page-header"><h1>Payroll Log</h1><div class="acts"><span class="tag">DAILY</span><button class="btn btn-primary" onclick="openModal('payroll')">+ Add</button></div></div>
+      <div class="filter-bar">
+        <label>Project:</label>
+        <select id="filter-payroll-project" onchange="renderPayroll()"><option value="">All</option></select>
+        <label>Worker:</label>
+        <select id="filter-payroll-worker" onchange="renderPayroll()"><option value="">All</option></select>
       </div>
       <div class="table-wrap">
         <div class="table-header"><h3>Labor Records</h3><span class="badge" id="badge-payroll">0</span></div>
-        <div class="scroll-wrap">
-          <table>
-            <thead><tr><th>Date</th><th>Project</th><th>Activity</th><th>Worker</th><th>Role</th><th class="r">Hours</th><th class="r">Rate/hr</th><th class="r">Labor Cost</th><th></th></tr></thead>
-            <tbody id="tbody-payroll"></tbody>
-          </table>
-        </div>
+        <div class="scroll-wrap"><table>
+          <thead><tr><th>Date</th><th>Project</th><th>Activity</th><th>Worker</th><th>Role</th><th class="r">Hours</th><th class="r">Rate/h</th><th class="r">Cost</th><th></th></tr></thead>
+          <tbody id="tbody-payroll"></tbody>
+        </table></div>
       </div>
     </div>
 
-    <!-- MATERIALS -->
+    <!-- ══ MATERIALS ══ -->
     <div id="page-materials" class="page">
-      <div class="page-header">
-        <h1>Material Log</h1>
-        <div class="actions">
-          <span class="tag">DAILY INPUT</span>
-          <button class="btn btn-primary" onclick="openModal('material')">+ Add Entry</button>
-        </div>
+      <div class="page-header"><h1>Material Log</h1><div class="acts"><span class="tag">DAILY</span><button class="btn btn-primary" onclick="openModal('material')">+ Add</button></div></div>
+      <div class="filter-bar">
+        <label>Project:</label>
+        <select id="filter-mat-project" onchange="renderMaterials()"><option value="">All</option></select>
       </div>
       <div class="table-wrap">
         <div class="table-header"><h3>Material Records</h3><span class="badge" id="badge-materials">0</span></div>
-        <div class="scroll-wrap">
-          <table>
-            <thead><tr><th>Date</th><th>Project</th><th>Activity</th><th class="r">Volume</th><th>Unit</th><th class="r">Cement bags</th><th class="r">Steel kg</th><th class="r">Concrete m³</th><th class="r">Sand m³</th><th class="r">Gravel m³</th><th class="r">Other $</th><th class="r">Total Mat. $</th><th></th></tr></thead>
-            <tbody id="tbody-materials"></tbody>
-          </table>
-        </div>
+        <div class="scroll-wrap"><table>
+          <thead><tr><th>Date</th><th>Project</th><th>Activity</th><th class="r">Volume</th><th>Unit</th><th class="r">Cement</th><th class="r">Steel kg</th><th class="r">Concrete m³</th><th class="r">Sand m³</th><th class="r">Gravel m³</th><th class="r">Other $</th><th class="r">Total $</th><th></th></tr></thead>
+          <tbody id="tbody-materials"></tbody>
+        </table></div>
       </div>
     </div>
 
-    <!-- COST -->
+    <!-- ══ COST ══ -->
     <div id="page-cost" class="page">
-      <div class="page-header">
-        <h1>Cost Tracking</h1>
-        <div class="actions">
-          <span class="tag">DAILY INPUT</span>
-          <button class="btn btn-primary" onclick="openModal('cost')">+ Add Entry</button>
-        </div>
+      <div class="page-header"><h1>Cost Tracking</h1><div class="acts"><span class="tag">DAILY</span><button class="btn btn-primary" onclick="openModal('cost')">+ Add</button></div></div>
+      <div class="filter-bar">
+        <label>Project:</label>
+        <select id="filter-cost-project" onchange="renderCost()"><option value="">All</option></select>
+        <label>Status:</label>
+        <select id="filter-cost-status" onchange="renderCost()">
+          <option value="">All</option><option>Completed</option><option>In Progress</option><option>On Hold</option>
+        </select>
       </div>
       <div class="table-wrap">
-        <div class="table-header"><h3>Activity Cost & Profitability</h3><span class="badge" id="badge-cost">0</span></div>
-        <div class="scroll-wrap">
-          <table>
-            <thead><tr><th>Date</th><th>Project</th><th>Activity</th><th>Status</th><th class="r">Volume</th><th>Unit</th><th class="r">Labor $</th><th class="r">Material $</th><th class="r">Other $</th><th class="r">Total Cost $</th><th class="r">Revenue $</th><th class="r">Profit $</th><th class="r">Profit/Unit</th><th class="r">Labor Hrs</th><th></th></tr></thead>
-            <tbody id="tbody-cost"></tbody>
-          </table>
-        </div>
+        <div class="table-header"><h3>Cost & Profitability</h3><span class="badge" id="badge-cost">0</span></div>
+        <div class="scroll-wrap"><table>
+          <thead><tr><th>Date</th><th>Project</th><th>Activity</th><th>Status</th><th class="r">Vol</th><th>Unit</th><th class="r">Labor $</th><th class="r">Material $</th><th class="r">Other $</th><th class="r">Total Cost</th><th class="r">Revenue</th><th class="r">Profit</th><th class="r">$/Unit</th><th class="r">Hrs</th><th></th></tr></thead>
+          <tbody id="tbody-cost"></tbody>
+        </table></div>
       </div>
     </div>
 
-    <!-- DAILY LOG -->
+    <!-- ══ DAILY LOG ══ -->
     <div id="page-daily" class="page">
-      <div class="page-header">
-        <h1>Daily Log</h1>
-        <div class="actions">
-          <span class="tag">MANAGEMENT</span>
-          <button class="btn btn-primary" onclick="openModal('daily')">+ Add Entry</button>
-        </div>
+      <div class="page-header"><h1>Daily Log</h1><div class="acts"><span class="tag">MANAGEMENT</span><button class="btn btn-primary" onclick="openModal('daily')">+ Add</button></div></div>
+      <div class="filter-bar">
+        <label>Project:</label>
+        <select id="filter-daily-project" onchange="renderDaily()"><option value="">All</option></select>
       </div>
       <div class="table-wrap">
-        <div class="table-header"><h3>Site Performance Scores (0–1)</h3><span class="badge" id="badge-daily">0</span></div>
-        <div class="scroll-wrap">
-          <table>
-            <thead><tr><th>Date</th><th>Project</th><th class="r">Mindset</th><th class="r">Site Control</th><th class="r">Concrete Quality</th><th class="r">Cost Control</th><th class="r">Problem Handling</th><th class="r">Discipline</th><th class="r">Total Score</th><th>Notes</th><th></th></tr></thead>
-            <tbody id="tbody-daily"></tbody>
-          </table>
-        </div>
+        <div class="table-header"><h3>Site Performance (0–1)</h3><span class="badge" id="badge-daily">0</span></div>
+        <div class="scroll-wrap"><table>
+          <thead><tr><th>Date</th><th>Project</th><th class="r">Mindset</th><th class="r">Site Control</th><th class="r">Concrete</th><th class="r">Cost</th><th class="r">Problem</th><th class="r">Discipline</th><th class="r">Score</th><th>Notes</th><th></th></tr></thead>
+          <tbody id="tbody-daily"></tbody>
+        </table></div>
       </div>
     </div>
 
-    <!-- DECISIONS -->
+    <!-- ══ DECISIONS ══ -->
     <div id="page-decisions" class="page">
-      <div class="page-header">
-        <h1>Decision Log</h1>
-        <div class="actions">
-          <span class="tag">OPTIONAL</span>
-          <button class="btn btn-primary" onclick="openModal('decision')">+ Add Decision</button>
-        </div>
-      </div>
+      <div class="page-header"><h1>Decision Log</h1><div class="acts"><span class="tag">OPTIONAL</span><button class="btn btn-primary" onclick="openModal('decision')">+ Add</button></div></div>
       <div class="table-wrap">
         <div class="table-header"><h3>Site Decisions</h3><span class="badge" id="badge-decisions">0</span></div>
-        <div class="scroll-wrap">
-          <table>
-            <thead><tr><th>Date</th><th>Project</th><th>Activity</th><th style="min-width:240px">Decision</th><th class="r">Facts</th><th class="r">No Ego</th><th class="r">Numbers</th><th class="r">Worst Case</th><th class="r">Simple</th><th class="r">Score</th><th>Approved</th><th>Follow-up</th><th></th></tr></thead>
-            <tbody id="tbody-decisions"></tbody>
-          </table>
-        </div>
+        <div class="scroll-wrap"><table>
+          <thead><tr><th>Date</th><th>Project</th><th>Activity</th><th style="min-width:200px">Decision</th><th class="r">Facts</th><th class="r">No Ego</th><th class="r">Numbers</th><th class="r">Worst Case</th><th class="r">Simple</th><th class="r">Score</th><th>Approved</th><th></th></tr></thead>
+          <tbody id="tbody-decisions"></tbody>
+        </table></div>
       </div>
     </div>
 
-    <!-- SETTINGS -->
+    <!-- ══ SETTINGS ══ -->
     <div id="page-settings" class="page">
       <div class="page-header"><h1>GitHub Setup</h1><span class="tag">ONE-TIME</span></div>
-      <div style="max-width:600px;display:flex;flex-direction:column;gap:16px;">
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:20px 24px;">
-          <h3 style="font-size:13px;font-weight:700;margin-bottom:16px;letter-spacing:1px;">Step-by-step setup</h3>
-          <ol style="display:flex;flex-direction:column;gap:10px;padding-left:18px;font-size:13px;line-height:1.7;color:var(--text);">
-            <li>Go to <b>github.com</b> and create a free account</li>
-            <li>Create a new repository — name it <b>contractor-data</b> — set it to <b>Private</b></li>
-            <li>Inside the repo, create a file named <b>data.json</b> — paste <code style="background:var(--bg);padding:1px 5px;border-radius:3px;font-size:11px;">{}</code> as content and commit</li>
-            <li>Go to <b>Settings → Developer settings → Personal access tokens → Tokens (classic)</b></li>
-            <li>Generate a new token — check the <b>repo</b> scope — copy it</li>
-            <li>Paste your token and repo name (<b>yourusername/contractor-data</b>) in the bar at the top</li>
-            <li>Click <b>Connect</b>, then <b>↓ Load</b> to pull data, <b>↑ Save</b> to push changes</li>
+      <div style="max-width:560px;display:flex;flex-direction:column;gap:14px;">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 22px;">
+          <h3 style="font-size:12px;font-weight:700;margin-bottom:14px;letter-spacing:1px;">Quick setup</h3>
+          <ol style="display:flex;flex-direction:column;gap:9px;padding-left:18px;font-size:13px;line-height:1.7;">
+            <li>Create free account at <b>github.com</b></li>
+            <li>New repo → name <b>contractor-data</b> → Private → Create</li>
+            <li>Add file <b>data.json</b> with content <code style="background:var(--bg);padding:1px 5px;border-radius:3px;font-size:11px;">{}</code></li>
+            <li>Settings → Developer settings → Tokens (classic) → Generate → check <b>repo</b> scope</li>
+            <li>Paste token + repo name above → Connect</li>
           </ol>
         </div>
-        <div style="background:#fff8ed;border:1px solid #fed7aa;border-radius:10px;padding:16px 20px;font-size:12px;color:#92400e;font-family:var(--mono);line-height:1.8;">
-          ⚠ Keep your token private — never share it. It gives write access to your GitHub repo.<br>
-          ✓ Your data file (data.json) on GitHub is your database — it saves everything.<br>
-          ✓ Always click <b>↑ Save</b> after making changes so they sync to GitHub.
+        <div style="background:#fff8ed;border:1px solid #fed7aa;border-radius:10px;padding:14px 18px;font-size:11px;color:#92400e;font-family:var(--mono);line-height:1.9;">
+          ⚠ Keep your token private — never share it.<br>
+          ✓ Always click <b>↑ Save</b> after making changes.<br>
+          ✓ On a new device, open this file → enter token → click ↓ Load.
         </div>
       </div>
     </div>
@@ -468,385 +503,393 @@ tr:hover .row-actions { opacity:1; }
 </div><!-- /.main -->
 </div><!-- /.layout -->
 
+<!-- ══ BOTTOM NAV ══ -->
+<nav class="bottom-nav">
+  <div class="bn-items">
+    <button class="bn-item active" onclick="showMobile('dashboard',this)" id="bn-dashboard"><span class="bn-ic">📊</span>Dashboard</button>
+    <button class="bn-item" onclick="showMobile('payroll',this)" id="bn-payroll"><span class="bn-ic">💰</span>Payroll</button>
+    <button class="bn-item" onclick="showMobile('project-summary',this)" id="bn-project-summary"><span class="bn-ic">📋</span>Summary</button>
+    <button class="bn-item" onclick="showMobile('cost',this)" id="bn-cost"><span class="bn-ic">📈</span>Costs</button>
+    <button class="bn-item" onclick="toggleMore(this)" id="bn-more"><span class="bn-ic">☰</span>More</button>
+  </div>
+</nav>
+
 <script>
-// ═══════════════════════════════════════
-// DATA STORE
-// ═══════════════════════════════════════
+// ═══════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════
 let DB = {
-  projects: [
-    { id:'P001', name:'Villa A', client:'Private Client', location:'Ehden', status:'Active', startDate:'2026-03-01', notes:'Example project' },
-    { id:'P002', name:'Villa B', client:'Private Client', location:'Zgharta', status:'Active', startDate:'2026-03-05', notes:'Example project' },
-    { id:'P003', name:'Hotel Renovation', client:'Hospitality Client', location:'Tripoli', status:'Planning', startDate:'2026-03-20', notes:'Example project' }
+  projects:[
+    {id:'P001',name:'Villa A',client:'Private Client',location:'Ehden',status:'Active',startDate:'2026-03-01',notes:'Example project'},
+    {id:'P002',name:'Villa B',client:'Private Client',location:'Zgharta',status:'Active',startDate:'2026-03-05',notes:'Example project'},
+    {id:'P003',name:'Hotel Renovation',client:'Hospitality Client',location:'Tripoli',status:'Planning',startDate:'2026-03-20',notes:'Example project'}
   ],
-  workers: [
-    { id:'W001', name:'Ali Hassan', role:'Steel Fixer', phone:'03-111111', dailyRate:25, hourlyRate:3.125, defaultProject:'P001', status:'Active', hireDate:'2025-01-10' },
-    { id:'W002', name:'Mahmoud K', role:'Carpenter', phone:'03-222222', dailyRate:30, hourlyRate:3.75, defaultProject:'P001', status:'Active', hireDate:'2025-02-15' },
-    { id:'W003', name:'George N', role:'Labor', phone:'03-333333', dailyRate:20, hourlyRate:2.5, defaultProject:'P002', status:'Active', hireDate:'2024-11-01' },
-    { id:'W004', name:'Youssef A', role:'Concrete Finisher', phone:'03-444444', dailyRate:28, hourlyRate:3.5, defaultProject:'P001', status:'Active', hireDate:'2025-05-08' }
+  workers:[
+    {id:'W001',name:'Ali Hassan',role:'Steel Fixer',phone:'03-111111',dailyRate:25,hourlyRate:3.125,defaultProject:'P001',status:'Active',hireDate:'2025-01-10'},
+    {id:'W002',name:'Mahmoud K',role:'Carpenter',phone:'03-222222',dailyRate:30,hourlyRate:3.75,defaultProject:'P001',status:'Active',hireDate:'2025-02-15'},
+    {id:'W003',name:'George N',role:'Labor',phone:'03-333333',dailyRate:20,hourlyRate:2.5,defaultProject:'P002',status:'Active',hireDate:'2024-11-01'},
+    {id:'W004',name:'Youssef A',role:'Concrete Finisher',phone:'03-444444',dailyRate:28,hourlyRate:3.5,defaultProject:'P001',status:'Active',hireDate:'2025-05-08'}
   ],
-  activities: [
-    { name:'Footing', group:'Concrete', unit:'m³' },
-    { name:'Tie Beam', group:'Concrete', unit:'m³' },
-    { name:'Column', group:'Concrete', unit:'m³' },
-    { name:'Beam', group:'Concrete', unit:'m³' },
-    { name:'Slab', group:'Concrete', unit:'m³' },
-    { name:'Retaining Wall', group:'Concrete', unit:'m³' },
-    { name:'Blockwork', group:'Masonry', unit:'m²' },
-    { name:'Plaster', group:'Finishing', unit:'m²' },
-    { name:'Waterproofing', group:'Finishing', unit:'m²' },
-    { name:'Steel Erection', group:'Steel', unit:'ton' }
+  activities:[
+    {name:'Footing',group:'Concrete',unit:'m³'},{name:'Tie Beam',group:'Concrete',unit:'m³'},
+    {name:'Column',group:'Concrete',unit:'m³'},{name:'Beam',group:'Concrete',unit:'m³'},
+    {name:'Slab',group:'Concrete',unit:'m³'},{name:'Retaining Wall',group:'Concrete',unit:'m³'},
+    {name:'Blockwork',group:'Masonry',unit:'m²'},{name:'Plaster',group:'Finishing',unit:'m²'},
+    {name:'Waterproofing',group:'Finishing',unit:'m²'},{name:'Steel Erection',group:'Steel',unit:'ton'}
   ],
-  payroll: [
-    { date:'2026-03-20', project:'P001', activity:'Slab', workerId:'W001', workerName:'Ali Hassan', role:'Steel Fixer', hours:10, hourlyRate:3.125, laborCost:31.25 },
-    { date:'2026-03-20', project:'P001', activity:'Slab', workerId:'W002', workerName:'Mahmoud K', role:'Carpenter', hours:9, hourlyRate:3.75, laborCost:33.75 },
-    { date:'2026-03-20', project:'P001', activity:'Slab', workerId:'W004', workerName:'Youssef A', role:'Concrete Finisher', hours:8, hourlyRate:3.5, laborCost:28 },
-    { date:'2026-03-20', project:'P002', activity:'Column', workerId:'W003', workerName:'George N', role:'Labor', hours:8, hourlyRate:2.5, laborCost:20 },
-    { date:'2026-03-21', project:'P001', activity:'Beam', workerId:'W001', workerName:'Ali Hassan', role:'Steel Fixer', hours:4, hourlyRate:3.125, laborCost:12.5 },
-    { date:'2026-03-21', project:'P002', activity:'Column', workerId:'W001', workerName:'Ali Hassan', role:'Steel Fixer', hours:4, hourlyRate:3.125, laborCost:12.5 },
-    { date:'2026-03-21', project:'P001', activity:'Beam', workerId:'W002', workerName:'Mahmoud K', role:'Carpenter', hours:8, hourlyRate:3.75, laborCost:30 }
+  payroll:[
+    {date:'2026-03-20',project:'P001',activity:'Slab',workerId:'W001',workerName:'Ali Hassan',role:'Steel Fixer',hours:10,hourlyRate:3.125,laborCost:31.25},
+    {date:'2026-03-20',project:'P001',activity:'Slab',workerId:'W002',workerName:'Mahmoud K',role:'Carpenter',hours:9,hourlyRate:3.75,laborCost:33.75},
+    {date:'2026-03-20',project:'P001',activity:'Slab',workerId:'W004',workerName:'Youssef A',role:'Concrete Finisher',hours:8,hourlyRate:3.5,laborCost:28},
+    {date:'2026-03-20',project:'P002',activity:'Column',workerId:'W003',workerName:'George N',role:'Labor',hours:8,hourlyRate:2.5,laborCost:20},
+    {date:'2026-03-21',project:'P001',activity:'Beam',workerId:'W001',workerName:'Ali Hassan',role:'Steel Fixer',hours:4,hourlyRate:3.125,laborCost:12.5},
+    {date:'2026-03-21',project:'P002',activity:'Column',workerId:'W001',workerName:'Ali Hassan',role:'Steel Fixer',hours:4,hourlyRate:3.125,laborCost:12.5},
+    {date:'2026-03-21',project:'P001',activity:'Beam',workerId:'W002',workerName:'Mahmoud K',role:'Carpenter',hours:8,hourlyRate:3.75,laborCost:30}
   ],
-  materials: [
-    { date:'2026-03-20', project:'P001', activity:'Slab', volume:45, unit:'m³', cement:414, steel:2800, concrete:45, sand:27, gravel:27, otherCost:150, totalMaterial:3200 },
-    { date:'2026-03-20', project:'P002', activity:'Column', volume:8, unit:'m³', cement:74, steel:950, concrete:8, sand:4.8, gravel:4.8, otherCost:60, totalMaterial:850 },
-    { date:'2026-03-21', project:'P001', activity:'Beam', volume:12, unit:'m³', cement:110, steel:650, concrete:12, sand:7.2, gravel:7.2, otherCost:40, totalMaterial:1100 }
+  materials:[
+    {date:'2026-03-20',project:'P001',activity:'Slab',volume:45,unit:'m³',cement:414,steel:2800,concrete:45,sand:27,gravel:27,otherCost:150,totalMaterial:3200},
+    {date:'2026-03-20',project:'P002',activity:'Column',volume:8,unit:'m³',cement:74,steel:950,concrete:8,sand:4.8,gravel:4.8,otherCost:60,totalMaterial:850},
+    {date:'2026-03-21',project:'P001',activity:'Beam',volume:12,unit:'m³',cement:110,steel:650,concrete:12,sand:7.2,gravel:7.2,otherCost:40,totalMaterial:1100}
   ],
-  cost: [
-    { date:'2026-03-20', project:'P001', activity:'Slab', status:'Completed', volume:45, unit:'m³', labor:93, material:3200, other:150, totalCost:3443, revenue:4500, profit:1057, profitPerUnit:23.49, laborHours:27 },
-    { date:'2026-03-20', project:'P002', activity:'Column', status:'Completed', volume:8, unit:'m³', labor:20, material:850, other:100, totalCost:970, revenue:1350, profit:380, profitPerUnit:47.5, laborHours:8 },
-    { date:'2026-03-21', project:'P001', activity:'Beam', status:'Completed', volume:12, unit:'m³', labor:42.5, material:1100, other:60, totalCost:1202.5, revenue:1500, profit:297.5, profitPerUnit:24.79, laborHours:12 }
+  cost:[
+    {date:'2026-03-20',project:'P001',activity:'Slab',status:'Completed',volume:45,unit:'m³',labor:93,material:3200,other:150,totalCost:3443,revenue:4500,profit:1057,profitPerUnit:23.49,laborHours:27},
+    {date:'2026-03-20',project:'P002',activity:'Column',status:'Completed',volume:8,unit:'m³',labor:20,material:850,other:100,totalCost:970,revenue:1350,profit:380,profitPerUnit:47.5,laborHours:8},
+    {date:'2026-03-21',project:'P001',activity:'Beam',status:'Completed',volume:12,unit:'m³',labor:42.5,material:1100,other:60,totalCost:1202.5,revenue:1500,profit:297.5,profitPerUnit:24.79,laborHours:12}
   ],
-  daily: [
-    { date:'2026-03-20', project:'P001', mindset:1, siteControl:0.9, concreteQuality:0.9, costControl:0.8, problemHandling:1, discipline:0.9, totalScore:0.917, notes:'Slab pour well controlled' },
-    { date:'2026-03-20', project:'P002', mindset:0.9, siteControl:0.8, concreteQuality:0.8, costControl:0.8, problemHandling:0.9, discipline:0.9, totalScore:0.85, notes:'Column work acceptable' },
-    { date:'2026-03-21', project:'P001', mindset:0.9, siteControl:0.9, concreteQuality:0.8, costControl:0.9, problemHandling:0.9, discipline:0.9, totalScore:0.883, notes:'Beam activity on track' }
+  daily:[
+    {date:'2026-03-20',project:'P001',mindset:1,siteControl:0.9,concreteQuality:0.9,costControl:0.8,problemHandling:1,discipline:0.9,totalScore:0.917,notes:'Slab pour well controlled'},
+    {date:'2026-03-20',project:'P002',mindset:0.9,siteControl:0.8,concreteQuality:0.8,costControl:0.8,problemHandling:0.9,discipline:0.9,totalScore:0.85,notes:'Column work acceptable'},
+    {date:'2026-03-21',project:'P001',mindset:0.9,siteControl:0.9,concreteQuality:0.8,costControl:0.9,problemHandling:0.9,discipline:0.9,totalScore:0.883,notes:'Beam activity on track'}
   ],
-  decisions: [
-    { date:'2026-03-20', project:'P001', activity:'Slab', decision:'Accepted slightly higher slump after verifying pumpability and finish risk', facts:1, noEgo:1, numbersOk:1, worstCase:1, simple:1, score:1, approved:'Yes', followUp:'' },
-    { date:'2026-03-21', project:'P002', activity:'Column', decision:'Split Ali between 2 projects due to priority', facts:1, noEgo:1, numbersOk:1, worstCase:1, simple:1, score:1, approved:'Yes', followUp:'' }
+  decisions:[
+    {date:'2026-03-20',project:'P001',activity:'Slab',decision:'Accepted slightly higher slump after verifying pumpability and finish risk',facts:1,noEgo:1,numbersOk:1,worstCase:1,simple:1,score:1,approved:'Yes',followUp:''},
+    {date:'2026-03-21',project:'P002',activity:'Column',decision:'Split Ali between 2 projects due to priority',facts:1,noEgo:1,numbersOk:1,worstCase:1,simple:1,score:1,approved:'Yes',followUp:''}
   ]
 };
 
-// GitHub config
-let GH = { token: '', repo: '' };
+let GH={token:'',repo:''};
+let _charts={};
+let _workerFilter='all', _activityFilter='all';
 
-function saveConfig() {
-  GH.token = document.getElementById('gh-token').value.trim();
-  GH.repo  = document.getElementById('gh-repo').value.trim();
-  localStorage.setItem('gh_token', GH.token);
-  localStorage.setItem('gh_repo', GH.repo);
-  setStatus('saving', 'Connecting...');
+// ═══════════════════════════════════════════════════
+// GITHUB
+// ═══════════════════════════════════════════════════
+function saveConfig(){
+  GH.token=$('gh-token').value.trim();GH.repo=$('gh-repo').value.trim();
+  localStorage.setItem('gh_token',GH.token);localStorage.setItem('gh_repo',GH.repo);
   loadFromGitHub();
 }
-
-function loadConfig() {
-  GH.token = localStorage.getItem('gh_token') || '';
-  GH.repo  = localStorage.getItem('gh_repo')  || '';
-  if (GH.token) document.getElementById('gh-token').value = GH.token;
-  if (GH.repo)  document.getElementById('gh-repo').value  = GH.repo;
+function loadConfig(){
+  GH.token=localStorage.getItem('gh_token')||'';GH.repo=localStorage.getItem('gh_repo')||'';
+  if(GH.token)$('gh-token').value=GH.token;if(GH.repo)$('gh-repo').value=GH.repo;
+}
+function setStatus(s,msg){$('status-dot').className='status-dot '+s;$('status-text').textContent=msg;}
+async function loadFromGitHub(){
+  if(!GH.token||!GH.repo){setStatus('err','No config');return;}
+  setStatus('saving','Loading...');
+  try{
+    const r=await fetch(`https://api.github.com/repos/${GH.repo}/contents/data.json`,{headers:{Authorization:`token ${GH.token}`,Accept:'application/vnd.github.v3+json'}});
+    if(!r.ok)throw new Error(r.status);
+    const j=await r.json();const c=JSON.parse(atob(j.content));
+    if(c&&Object.keys(c).length>0)DB={...DB,...c};
+    window._ghSha=j.sha;
+    setStatus('ok',`Loaded · ${new Date().toLocaleTimeString()}`);renderAll();
+  }catch(e){setStatus('err','Load failed — check token & repo');}
+}
+async function saveToGitHub(){
+  if(!GH.token||!GH.repo){setStatus('err','No config');return;}
+  setStatus('saving','Saving...');
+  try{
+    const content=btoa(unescape(encodeURIComponent(JSON.stringify(DB,null,2))));
+    const body={message:'Update '+new Date().toISOString(),content};
+    if(window._ghSha)body.sha=window._ghSha;
+    const r=await fetch(`https://api.github.com/repos/${GH.repo}/contents/data.json`,{method:'PUT',headers:{Authorization:`token ${GH.token}`,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(!r.ok)throw new Error(r.status);
+    const j=await r.json();window._ghSha=j.content.sha;
+    setStatus('ok',`Saved · ${new Date().toLocaleTimeString()}`);
+  }catch(e){setStatus('err','Save failed — '+e.message);}
 }
 
-function setStatus(state, msg) {
-  const dot  = document.getElementById('status-dot');
-  const text = document.getElementById('status-text');
-  dot.className = 'status-dot ' + state;
-  text.textContent = msg;
-}
-
-async function loadFromGitHub() {
-  if (!GH.token || !GH.repo) { setStatus('err','No GitHub config — fill token & repo above'); return; }
-  setStatus('saving','Loading from GitHub...');
-  try {
-    const res = await fetch(`https://api.github.com/repos/${GH.repo}/contents/data.json`, {
-      headers: { Authorization: `token ${GH.token}`, Accept: 'application/vnd.github.v3+json' }
-    });
-    if (!res.ok) throw new Error(res.status);
-    const json = await res.json();
-    const content = JSON.parse(atob(json.content));
-    if (content && Object.keys(content).length > 0) {
-      DB = { ...DB, ...content };
-    }
-    window._ghSha = json.sha;
-    setStatus('ok', `Loaded from GitHub · ${new Date().toLocaleTimeString()}`);
-    renderAll();
-  } catch(e) {
-    setStatus('err', 'Load failed — check token & repo name');
-  }
-}
-
-async function saveToGitHub() {
-  if (!GH.token || !GH.repo) { setStatus('err','No GitHub config'); return; }
-  setStatus('saving','Saving to GitHub...');
-  try {
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(DB, null, 2))));
-    const body = { message: 'Update data ' + new Date().toISOString(), content };
-    if (window._ghSha) body.sha = window._ghSha;
-    const res = await fetch(`https://api.github.com/repos/${GH.repo}/contents/data.json`, {
-      method: 'PUT',
-      headers: { Authorization: `token ${GH.token}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-    if (!res.ok) throw new Error(res.status);
-    const json = await res.json();
-    window._ghSha = json.content.sha;
-    setStatus('ok', `Saved to GitHub · ${new Date().toLocaleTimeString()}`);
-  } catch(e) {
-    setStatus('err', 'Save failed — ' + e.message);
-  }
-}
-
-// ═══════════════════════════════════════
+// ═══════════════════════════════════════════════════
 // NAVIGATION
-// ═══════════════════════════════════════
-function show(page, el) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
-  if (el) el.classList.add('active');
-  renderAll();
+// ═══════════════════════════════════════════════════
+function show(page,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  $('page-'+page).classList.add('active');
+  if(el)el.classList.add('active');
+  renderAll();updateCharts();
 }
+function showMobile(page,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.bn-item').forEach(n=>n.classList.remove('active'));
+  $('page-'+page).classList.add('active');
+  if(el)el.classList.add('active');
+  renderAll();updateCharts();
+}
+function toggleMore(el){
+  const m=$('more-menu');m.classList.toggle('open');
+  if(el)el.classList.toggle('active');
+}
+document.addEventListener('click',e=>{
+  const m=$('more-menu');
+  if(m.classList.contains('open')&&!m.contains(e.target)&&!e.target.closest('#bn-more'))m.classList.remove('open');
+});
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════════════════════════
 // HELPERS
-// ═══════════════════════════════════════
-const $ = id => document.getElementById(id);
-const fmt = n => isNaN(n) ? '—' : '$' + (+n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-const fmtN = n => isNaN(n) ? '—' : (+n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-const pillStatus = s => {
-  const map = { Active:'active', Planning:'planning', Completed:'completed', Inactive:'inactive' };
-  return `<span class="pill ${map[s]||''}">${s}</span>`;
-};
-function scoreBar(v) {
-  const cls = v < 0.8 ? 'warn' : '';
-  return `<div class="score-bar-wrap"><div class="score-bar"><div class="score-bar-fill ${cls}" style="width:${v*100}%"></div></div><span class="score-val">${(+v).toFixed(2)}</span></div>`;
-}
-function rowBtns(table, idx) {
-  return `<div class="row-actions" style="display:flex;gap:4px;">
-    <button class="btn btn-secondary btn-sm" onclick="editRow('${table}',${idx})">✎ Edit</button>
-    <button class="btn btn-danger btn-sm" onclick="deleteRow('${table}',${idx})">✕</button>
-  </div>`;
-}
-function deleteRow(table, idx) {
-  if (!confirm('Delete this entry?')) return;
-  DB[table].splice(idx,1);
-  renderAll();
-  autoSave();
-}
+// ═══════════════════════════════════════════════════
+const $=id=>document.getElementById(id);
+const fmt=n=>isNaN(n)?'—':'$'+(+n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const pillStatus=s=>{const m={Active:'active',Planning:'planning',Completed:'completed',Inactive:'inactive','In Progress':'inprogress','On Hold':'onhold'};return`<span class="pill ${m[s]||''}">${s}</span>`;};
+function sbWrap(v){const c=v<0.8?'warn':'';return`<div class="sb-wrap"><div class="sb"><div class="sb-fill ${c}" style="width:${v*100}%"></div></div><span class="sb-val">${(+v).toFixed(2)}</span></div>`;}
+function rowBtns(table,idx){return`<div style="display:flex;gap:4px;"><button class="btn btn-secondary btn-sm" onclick="editRow('${table}',${idx})">✎</button><button class="btn btn-danger btn-sm" onclick="deleteRow('${table}',${idx})">✕</button></div>`;}
+function deleteRow(table,idx){if(!confirm('Delete this entry?'))return;DB[table].splice(idx,1);renderAll();autoSave();}
+function autoSave(){localStorage.setItem('contractor_db',JSON.stringify(DB));}
+let _editIdx=-1,_modalType='';
 
-let _editIdx = -1;
-
-function editRow(table, idx) {
-  _editIdx = idx;
-  const typeMap = { projects:'project', workers:'worker', activities:'activity', payroll:'payroll', materials:'material', cost:'cost', daily:'daily', decisions:'decision' };
-  const type = typeMap[table];
-  _modalType = type;
-  const form = FORMS[type];
-  $('modal-title').textContent = 'Edit Entry';
-  $('modal-body').innerHTML = form.html();
-  // Pre-fill fields with existing data
-  const r = DB[table][idx];
-  form.prefill(r);
+function editRow(table,idx){
+  _editIdx=idx;
+  const tm={projects:'project',workers:'worker',activities:'activity',payroll:'payroll',materials:'material',cost:'cost',daily:'daily',decisions:'decision'};
+  const type=tm[table];_modalType=type;
+  const form=FORMS[type];
+  $('modal-title').textContent='Edit Entry';$('modal-body').innerHTML=form.html();form.prefill(DB[table][idx]);
   $('modal-overlay').classList.add('open');
 }
+function setVal(id,val){const el=$(id);if(el&&val!==undefined&&val!==null)el.value=val;}
+function setSelect(id,val){const el=$(id);if(!el)return;for(let o of el.options){if(o.value==val||o.text==val){o.selected=true;break;}}}
 
-function setVal(id, val) { const el = $(id); if(el && val !== undefined && val !== null) el.value = val; }
-function setSelect(id, val) {
-  const el = $(id);
-  if (!el) return;
-  for (let o of el.options) { if (o.value == val || o.text == val) { o.selected = true; break; } }
-}
-function autoSave() {
-  localStorage.setItem('contractor_db', JSON.stringify(DB));
+// Filter helpers
+function filterWorkers(f,el){_workerFilter=f;document.querySelectorAll('.section-tabs .stab').forEach(s=>s.classList.remove('active'));if(el)el.classList.add('active');renderWorkers();}
+function filterActivities(f,el){_activityFilter=f;el&&el.closest('.section-tabs').querySelectorAll('.stab').forEach(s=>s.classList.remove('active'));if(el)el.classList.add('active');renderActivities();}
+
+function populateFilters(){
+  ['filter-payroll-project','filter-mat-project','filter-cost-project','filter-daily-project'].forEach(id=>{
+    const el=$(id);if(!el)return;
+    const cur=el.value;el.innerHTML='<option value="">All</option>';
+    DB.projects.forEach(p=>el.insertAdjacentHTML('beforeend',`<option value="${p.id}">${p.id} — ${p.name}</option>`));
+    el.value=cur;
+  });
+  const fw=$('filter-payroll-worker');
+  if(fw){const cur=fw.value;fw.innerHTML='<option value="">All</option>';DB.workers.forEach(w=>fw.insertAdjacentHTML('beforeend',`<option value="${w.id}">${w.name}</option>`));fw.value=cur;}
 }
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════════════════════════
+// CHARTS
+// ═══════════════════════════════════════════════════
+const CHART_COLORS={rev:'rgba(37,99,168,.8)',cost:'rgba(200,75,0,.8)',profit:'rgba(26,140,78,.8)',warn:'rgba(217,119,6,.8)'};
+
+function destroyChart(id){if(_charts[id]){_charts[id].destroy();delete _charts[id];}}
+
+function updateCharts(){
+  const page=document.querySelector('.page.active');
+  if(!page||page.id!=='page-dashboard')return;
+
+  // Chart 1 — Revenue vs Cost vs Profit per project
+  destroyChart('rcp');
+  const projNames=DB.projects.map(p=>p.name);
+  const revs=DB.projects.map(p=>DB.cost.filter(r=>r.project===p.id).reduce((a,r)=>a+(+r.revenue||0),0));
+  const costs=DB.projects.map(p=>DB.cost.filter(r=>r.project===p.id).reduce((a,r)=>a+(+r.totalCost||0),0));
+  const profits=revs.map((r,i)=>r-costs[i]);
+  const ctx1=$('chart-rcp');
+  if(ctx1)_charts['rcp']=new Chart(ctx1,{type:'bar',data:{labels:projNames,datasets:[
+    {label:'Revenue',data:revs,backgroundColor:CHART_COLORS.rev,borderRadius:4},
+    {label:'Cost',data:costs,backgroundColor:CHART_COLORS.cost,borderRadius:4},
+    {label:'Profit',data:profits,backgroundColor:CHART_COLORS.profit,borderRadius:4}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{family:'JetBrains Mono',size:10},color:'#7a7268'}}},scales:{x:{ticks:{color:'#7a7268',font:{family:'JetBrains Mono',size:10}},grid:{display:false}},y:{ticks:{color:'#7a7268',font:{family:'JetBrains Mono',size:10},callback:v=>'$'+v.toLocaleString()},grid:{color:'#e2ddd6'}}}}});
+
+  // Chart 2 — Profit by activity (donut)
+  destroyChart('activity');
+  const acts=[...new Set(DB.cost.map(r=>r.activity))];
+  const actProfits=acts.map(a=>DB.cost.filter(r=>r.activity===a).reduce((s,r)=>s+(+r.profit||0),0));
+  const ctx2=$('chart-activity');
+  if(ctx2)_charts['activity']=new Chart(ctx2,{type:'doughnut',data:{labels:acts,datasets:[{data:actProfits,backgroundColor:['rgba(200,75,0,.8)','rgba(37,99,168,.8)','rgba(26,140,78,.8)','rgba(217,119,6,.8)','rgba(107,114,128,.8)'],borderWidth:0,hoverOffset:4}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom',labels:{font:{family:'JetBrains Mono',size:10},color:'#7a7268',padding:12}}}}});
+
+  // Chart 3 — Labor hours by project (horizontal bar)
+  destroyChart('hours');
+  const projHrs=DB.projects.map(p=>DB.payroll.filter(r=>r.project===p.id).reduce((a,r)=>a+(+r.hours||0),0));
+  const ctx3=$('chart-hours');
+  if(ctx3)_charts['hours']=new Chart(ctx3,{type:'bar',data:{labels:projNames,datasets:[{label:'Hours',data:projHrs,backgroundColor:CHART_COLORS.rev,borderRadius:4}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#7a7268',font:{family:'JetBrains Mono',size:10}},grid:{color:'#e2ddd6'}},y:{ticks:{color:'#7a7268',font:{family:'JetBrains Mono',size:10}},grid:{display:false}}}}});
+
+  // Chart 4 — Daily score trend (line)
+  destroyChart('score');
+  const dailySorted=[...DB.daily].sort((a,b)=>a.date.localeCompare(b.date));
+  const scoreLabels=dailySorted.map(r=>r.date.slice(5));
+  const scoreVals=dailySorted.map(r=>+(+r.totalScore).toFixed(2));
+  const ctx4=$('chart-score');
+  if(ctx4)_charts['score']=new Chart(ctx4,{type:'line',data:{labels:scoreLabels,datasets:[{label:'Score',data:scoreVals,borderColor:'rgba(26,140,78,.9)',backgroundColor:'rgba(26,140,78,.1)',fill:true,tension:.35,pointBackgroundColor:'rgba(26,140,78,.9)',pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:'#7a7268',font:{family:'JetBrains Mono',size:10}},grid:{display:false}},y:{min:0,max:1,ticks:{color:'#7a7268',font:{family:'JetBrains Mono',size:10}},grid:{color:'#e2ddd6'}}}}});
+}
+
+// ═══════════════════════════════════════════════════
 // RENDER ALL
-// ═══════════════════════════════════════
-function renderAll() {
-  renderDashboard();
-  renderProjectSummary();
-  renderProjects();
-  renderWorkers();
-  renderActivities();
-  renderPayroll();
-  renderMaterials();
-  renderCost();
-  renderDaily();
-  renderDecisions();
+// ═══════════════════════════════════════════════════
+function renderAll(){
+  populateFilters();
+  renderDashboard();renderProjectSummary();
+  renderProjects();renderWorkers();renderActivities();
+  renderPayroll();renderMaterials();renderCost();renderDaily();renderDecisions();
 }
 
-function renderDashboard() {
-  const totalRev    = DB.cost.reduce((a,r)=>a+(+r.revenue||0),0);
-  const totalCost   = DB.cost.reduce((a,r)=>a+(+r.totalCost||0),0);
-  const totalProfit = totalRev - totalCost;
-  const totalHrs    = DB.payroll.reduce((a,r)=>a+(+r.hours||0),0);
-  const avgScore    = DB.daily.length ? DB.daily.reduce((a,r)=>a+(+r.totalScore||0),0)/DB.daily.length : 0;
-  const volumes     = DB.cost.reduce((a,r)=>a+(+r.volume||0),0);
-  const avgPPU      = volumes ? totalProfit/volumes : 0;
-
-  $('kpi-grid').innerHTML = `
-    <div class="kpi-card blue"><label>Total Revenue</label><div class="val blue">${fmt(totalRev)}</div></div>
+function renderDashboard(){
+  const totalRev=DB.cost.reduce((a,r)=>a+(+r.revenue||0),0);
+  const totalCost=DB.cost.reduce((a,r)=>a+(+r.totalCost||0),0);
+  const totalProfit=totalRev-totalCost;
+  const totalHrs=DB.payroll.reduce((a,r)=>a+(+r.hours||0),0);
+  const avgScore=DB.daily.length?DB.daily.reduce((a,r)=>a+(+r.totalScore||0),0)/DB.daily.length:0;
+  const volumes=DB.cost.reduce((a,r)=>a+(+r.volume||0),0);
+  const avgPPU=volumes?totalProfit/volumes:0;
+  $('kpi-grid').innerHTML=`
+    <div class="kpi-card blue"><label>Revenue</label><div class="val blue">${fmt(totalRev)}</div></div>
     <div class="kpi-card"><label>Total Cost</label><div class="val red">${fmt(totalCost)}</div></div>
-    <div class="kpi-card green"><label>Total Profit</label><div class="val green">${fmt(totalProfit)}</div></div>
-    <div class="kpi-card"><label>Avg Profit/Unit</label><div class="val">${fmt(avgPPU)}</div></div>
-    <div class="kpi-card blue"><label>Total Labor Hours</label><div class="val blue">${totalHrs} h</div></div>
-    <div class="kpi-card green"><label>Avg Daily Score</label><div class="val green">${avgScore.toFixed(3)}</div></div>
+    <div class="kpi-card green"><label>Profit</label><div class="val green">${fmt(totalProfit)}</div></div>
+    <div class="kpi-card"><label>Profit/Unit</label><div class="val">${fmt(avgPPU)}</div></div>
+    <div class="kpi-card blue"><label>Labor Hrs</label><div class="val blue">${totalHrs}h</div></div>
+    <div class="kpi-card green"><label>Avg Score</label><div class="val green">${avgScore.toFixed(3)}</div></div>
   `;
-
-  $('activity-cards').innerHTML = DB.cost.map(r => {
-    const proj = DB.projects.find(p=>p.id===r.project);
-    return `<div class="activity-card">
-      <div class="act-name">📦 ${r.activity} — ${r.project} ${proj?proj.name:''}</div>
-      <div class="act-row"><span>Revenue</span><span class="pos">${fmt(r.revenue)}</span></div>
-      <div class="act-row"><span>Cost</span><span class="neg">${fmt(r.totalCost)}</span></div>
-      <div class="act-row"><span>Profit</span><span class="pos">${fmt(r.profit)}</span></div>
-      <div class="act-row"><span>Profit/Unit</span><span>${fmt(r.profitPerUnit)}</span></div>
-    </div>`;
-  }).join('') || '<div class="empty-state"><div class="icon">📊</div>No cost entries yet</div>';
+  $('activity-cards').innerHTML=DB.cost.map(r=>{
+    const proj=DB.projects.find(p=>p.id===r.project);
+    return`<div class="act-card"><div class="act-name">📦 ${r.activity} — ${proj?proj.name:r.project}</div>
+    <div class="act-row"><span>Revenue</span><span class="pos">${fmt(r.revenue)}</span></div>
+    <div class="act-row"><span>Cost</span><span class="neg">${fmt(r.totalCost)}</span></div>
+    <div class="act-row"><span>Profit</span><span class="pos">${fmt(r.profit)}</span></div>
+    <div class="act-row"><span>Profit/Unit</span><span>${fmt(r.profitPerUnit)}</span></div></div>`;
+  }).join('')||'<div class="empty-state"><div class="ic">📊</div>No cost entries yet</div>';
 }
 
-function renderProjectSummary() {
-  $('tbody-project-summary').innerHTML = DB.projects.map(p => {
-    const costs   = DB.cost.filter(r=>r.project===p.id);
-    const rev     = costs.reduce((a,r)=>a+(+r.revenue||0),0);
-    const cost    = costs.reduce((a,r)=>a+(+r.totalCost||0),0);
-    const profit  = rev - cost;
-    const vol     = costs.reduce((a,r)=>a+(+r.volume||0),0);
-    const ppu     = vol ? profit/vol : 0;
-    const hrs     = DB.payroll.filter(r=>r.project===p.id).reduce((a,r)=>a+(+r.hours||0),0);
-    const dailies = DB.daily.filter(r=>r.project===p.id);
-    const avg     = dailies.length ? dailies.reduce((a,r)=>a+(+r.totalScore||0),0)/dailies.length : null;
-    return `<tr>
-      <td class="muted">${p.id}</td><td><b>${p.name}</b></td>
-      <td class="r revenue">${rev?fmt(rev):'—'}</td>
-      <td class="r cost">${cost?fmt(cost):'—'}</td>
-      <td class="r profit">${profit?fmt(profit):'—'}</td>
-      <td class="r">${vol?vol+' m³':'—'}</td>
-      <td class="r">${vol?fmt(ppu):'—'}</td>
-      <td class="r">${hrs?hrs+' h':'—'}</td>
-      <td class="r">${avg!==null?scoreBar(avg):'—'}</td>
-    </tr>`;
+function renderProjectSummary(){
+  $('tbody-project-summary').innerHTML=DB.projects.map(p=>{
+    const c=DB.cost.filter(r=>r.project===p.id);
+    const rev=c.reduce((a,r)=>a+(+r.revenue||0),0);
+    const cost=c.reduce((a,r)=>a+(+r.totalCost||0),0);
+    const profit=rev-cost;const vol=c.reduce((a,r)=>a+(+r.volume||0),0);
+    const ppu=vol?profit/vol:0;
+    const hrs=DB.payroll.filter(r=>r.project===p.id).reduce((a,r)=>a+(+r.hours||0),0);
+    const dd=DB.daily.filter(r=>r.project===p.id);
+    const avg=dd.length?dd.reduce((a,r)=>a+(+r.totalScore||0),0)/dd.length:null;
+    return`<tr><td class="muted">${p.id}</td><td><b>${p.name}</b></td>
+    <td class="r revenue">${rev?fmt(rev):'—'}</td><td class="r cost">${cost?fmt(cost):'—'}</td>
+    <td class="r profit">${profit?fmt(profit):'—'}</td><td class="r">${vol?vol+' m³':'—'}</td>
+    <td class="r">${vol?fmt(ppu):'—'}</td><td class="r">${hrs?hrs+'h':'—'}</td>
+    <td class="r">${avg!==null?sbWrap(avg):'—'}</td></tr>`;
   }).join('');
 }
 
-function renderProjects() {
-  $('badge-projects').textContent = DB.projects.length + ' projects';
-  $('tbody-projects').innerHTML = DB.projects.map((p,i) => `<tr>
+function renderProjects(){
+  $('badge-projects').textContent=DB.projects.length+' projects';
+  $('tbody-projects').innerHTML=DB.projects.map((p,i)=>`<tr>
     <td><b>${p.id}</b></td><td>${p.name}</td><td>${p.client}</td>
     <td>${p.location}</td><td>${pillStatus(p.status)}</td>
     <td class="muted">${p.startDate}</td><td class="muted">${p.notes||'—'}</td>
-    <td>${rowBtns('projects',i)}</td>
-  </tr>`).join('');
+    <td>${rowBtns('projects',i)}</td></tr>`).join('');
 }
 
-function renderWorkers() {
-  $('badge-workers').textContent = DB.workers.length + ' workers';
-  $('tbody-workers').innerHTML = DB.workers.map((w,i) => `<tr>
+function renderWorkers(){
+  let data=DB.workers;
+  if(_workerFilter!=='all')data=data.filter(w=>w.status===_workerFilter);
+  $('badge-workers').textContent=data.length+' workers';
+  $('tbody-workers').innerHTML=data.map((w,i)=>`<tr>
     <td class="muted">${w.id}</td><td><b>${w.name}</b></td><td>${w.role}</td>
     <td class="muted">${w.phone}</td>
-    <td class="r">$${(+w.dailyRate).toFixed(2)}</td>
-    <td class="r">$${(+w.hourlyRate).toFixed(3)}</td>
+    <td class="r">$${(+w.dailyRate).toFixed(2)}</td><td class="r">$${(+w.hourlyRate).toFixed(3)}</td>
     <td>${w.defaultProject}</td><td>${pillStatus(w.status)}</td>
-    <td class="muted">${w.hireDate}</td>
-    <td>${rowBtns('workers',i)}</td>
-  </tr>`).join('');
+    <td>${rowBtns('workers',DB.workers.indexOf(w))}</td></tr>`).join('');
 }
 
-function renderActivities() {
-  $('badge-activities').textContent = DB.activities.length + ' activities';
-  $('tbody-activities').innerHTML = DB.activities.map((a,i) => `<tr>
+function renderActivities(){
+  let data=DB.activities;
+  if(_activityFilter!=='all')data=data.filter(a=>a.group===_activityFilter);
+  $('badge-activities').textContent=data.length+' activities';
+  $('tbody-activities').innerHTML=data.map((a,i)=>`<tr>
     <td class="muted">${i+1}</td><td>${a.name}</td><td>${a.group}</td><td>${a.unit}</td>
-    <td>${rowBtns('activities',i)}</td>
-  </tr>`).join('');
+    <td>${rowBtns('activities',DB.activities.indexOf(a))}</td></tr>`).join('');
 }
 
-function renderPayroll() {
-  $('badge-payroll').textContent = DB.payroll.length + ' entries';
-  $('tbody-payroll').innerHTML = DB.payroll.map((r,i) => `<tr>
+function renderPayroll(){
+  const fp=$('filter-payroll-project')?.value||'';
+  const fw=$('filter-payroll-worker')?.value||'';
+  let data=DB.payroll;
+  if(fp)data=data.filter(r=>r.project===fp);
+  if(fw)data=data.filter(r=>r.workerId===fw);
+  $('badge-payroll').textContent=data.length+' entries';
+  $('tbody-payroll').innerHTML=data.map((r,i)=>`<tr>
     <td class="muted">${r.date}</td><td>${r.project}</td><td>${r.activity}</td>
     <td>${r.workerName}</td><td>${r.role}</td>
-    <td class="r">${r.hours}</td>
-    <td class="r">$${(+r.hourlyRate).toFixed(3)}</td>
+    <td class="r">${r.hours}h</td><td class="r">$${(+r.hourlyRate).toFixed(3)}</td>
     <td class="r profit">${fmt(r.laborCost)}</td>
-    <td>${rowBtns('payroll',i)}</td>
-  </tr>`).join('') || '<tr><td colspan="9"><div class="empty-state"><div class="icon">💰</div>No payroll entries yet</div></td></tr>';
+    <td>${rowBtns('payroll',DB.payroll.indexOf(r))}</td></tr>`).join('')
+    ||'<tr><td colspan="9"><div class="empty-state"><div class="ic">💰</div>No entries yet</div></td></tr>';
 }
 
-function renderMaterials() {
-  $('badge-materials').textContent = DB.materials.length + ' entries';
-  $('tbody-materials').innerHTML = DB.materials.map((r,i) => `<tr>
+function renderMaterials(){
+  const fp=$('filter-mat-project')?.value||'';
+  let data=DB.materials;if(fp)data=data.filter(r=>r.project===fp);
+  $('badge-materials').textContent=data.length+' entries';
+  $('tbody-materials').innerHTML=data.map((r,i)=>`<tr>
     <td class="muted">${r.date}</td><td>${r.project}</td><td>${r.activity}</td>
     <td class="r">${r.volume}</td><td>${r.unit}</td>
     <td class="r">${r.cement}</td><td class="r">${r.steel}</td><td class="r">${r.concrete}</td>
     <td class="r">${r.sand}</td><td class="r">${r.gravel}</td>
     <td class="r">$${r.otherCost}</td><td class="r cost">${fmt(r.totalMaterial)}</td>
-    <td>${rowBtns('materials',i)}</td>
-  </tr>`).join('') || '<tr><td colspan="13"><div class="empty-state"><div class="icon">🧱</div>No material entries yet</div></td></tr>';
+    <td>${rowBtns('materials',DB.materials.indexOf(r))}</td></tr>`).join('')
+    ||'<tr><td colspan="13"><div class="empty-state"><div class="ic">🧱</div>No entries yet</div></td></tr>';
 }
 
-function renderCost() {
-  $('badge-cost').textContent = DB.cost.length + ' entries';
-  $('tbody-cost').innerHTML = DB.cost.map((r,i) => `<tr>
+function renderCost(){
+  const fp=$('filter-cost-project')?.value||'';
+  const fs=$('filter-cost-status')?.value||'';
+  let data=DB.cost;if(fp)data=data.filter(r=>r.project===fp);if(fs)data=data.filter(r=>r.status===fs);
+  $('badge-cost').textContent=data.length+' entries';
+  $('tbody-cost').innerHTML=data.map((r,i)=>`<tr>
     <td class="muted">${r.date}</td><td>${r.project}</td><td>${r.activity}</td>
-    <td>${pillStatus(r.status)}</td>
-    <td class="r">${r.volume}</td><td>${r.unit}</td>
-    <td class="r">$${(+r.labor).toFixed(2)}</td>
-    <td class="r">$${(+r.material).toFixed(2)}</td>
+    <td>${pillStatus(r.status)}</td><td class="r">${r.volume}</td><td>${r.unit}</td>
+    <td class="r">$${(+r.labor).toFixed(2)}</td><td class="r">$${(+r.material).toFixed(2)}</td>
     <td class="r">$${(+r.other).toFixed(2)}</td>
-    <td class="r cost">${fmt(r.totalCost)}</td>
-    <td class="r revenue">${fmt(r.revenue)}</td>
-    <td class="r profit">${fmt(r.profit)}</td>
-    <td class="r profit">${fmt(r.profitPerUnit)}</td>
-    <td class="r">${r.laborHours} h</td>
-    <td>${rowBtns('cost',i)}</td>
-  </tr>`).join('') || '<tr><td colspan="15"><div class="empty-state"><div class="icon">📈</div>No cost entries yet</div></td></tr>';
+    <td class="r cost">${fmt(r.totalCost)}</td><td class="r revenue">${fmt(r.revenue)}</td>
+    <td class="r profit">${fmt(r.profit)}</td><td class="r profit">${fmt(r.profitPerUnit)}</td>
+    <td class="r">${r.laborHours}h</td>
+    <td>${rowBtns('cost',DB.cost.indexOf(r))}</td></tr>`).join('')
+    ||'<tr><td colspan="15"><div class="empty-state"><div class="ic">📈</div>No entries yet</div></td></tr>';
 }
 
-function renderDaily() {
-  $('badge-daily').textContent = DB.daily.length + ' entries';
-  $('tbody-daily').innerHTML = DB.daily.map((r,i) => `<tr>
+function renderDaily(){
+  const fp=$('filter-daily-project')?.value||'';
+  let data=DB.daily;if(fp)data=data.filter(r=>r.project===fp);
+  $('badge-daily').textContent=data.length+' entries';
+  $('tbody-daily').innerHTML=data.map((r,i)=>`<tr>
     <td class="muted">${r.date}</td><td>${r.project}</td>
     <td class="r">${r.mindset}</td><td class="r">${r.siteControl}</td>
     <td class="r">${r.concreteQuality}</td><td class="r">${r.costControl}</td>
     <td class="r">${r.problemHandling}</td><td class="r">${r.discipline}</td>
-    <td class="r">${scoreBar(r.totalScore)}</td>
-    <td class="muted">${r.notes||'—'}</td>
-    <td>${rowBtns('daily',i)}</td>
-  </tr>`).join('') || '<tr><td colspan="11"><div class="empty-state"><div class="icon">📝</div>No daily entries yet</div></td></tr>';
+    <td class="r">${sbWrap(r.totalScore)}</td><td class="muted">${r.notes||'—'}</td>
+    <td>${rowBtns('daily',DB.daily.indexOf(r))}</td></tr>`).join('')
+    ||'<tr><td colspan="11"><div class="empty-state"><div class="ic">📝</div>No entries yet</div></td></tr>';
 }
 
-function renderDecisions() {
-  $('badge-decisions').textContent = DB.decisions.length + ' entries';
-  $('tbody-decisions').innerHTML = DB.decisions.map((r,i) => {
-    const chk = v => v==1 ? '<span style="color:var(--accent3)">✓</span>' : '<span style="color:var(--accent)">✗</span>';
-    return `<tr>
-      <td class="muted">${r.date}</td><td>${r.project}</td><td>${r.activity}</td>
-      <td>${r.decision}</td>
-      <td class="r">${chk(r.facts)}</td><td class="r">${chk(r.noEgo)}</td>
-      <td class="r">${chk(r.numbersOk)}</td><td class="r">${chk(r.worstCase)}</td>
-      <td class="r">${chk(r.simple)}</td>
-      <td class="r"><b>${r.score}</b></td>
-      <td>${pillStatus(r.approved==='Yes'?'Active':'Inactive')}</td>
-      <td class="muted">${r.followUp||'—'}</td>
-      <td>${rowBtns('decisions',i)}</td>
-    </tr>`;
-  }).join('') || '<tr><td colspan="13"><div class="empty-state"><div class="icon">🎯</div>No decisions yet</div></td></tr>';
+function renderDecisions(){
+  $('badge-decisions').textContent=DB.decisions.length+' entries';
+  $('tbody-decisions').innerHTML=DB.decisions.map((r,i)=>{
+    const chk=v=>v==1?'<span style="color:var(--accent3)">✓</span>':'<span style="color:var(--accent)">✗</span>';
+    return`<tr><td class="muted">${r.date}</td><td>${r.project}</td><td>${r.activity}</td>
+    <td>${r.decision}</td><td class="r">${chk(r.facts)}</td><td class="r">${chk(r.noEgo)}</td>
+    <td class="r">${chk(r.numbersOk)}</td><td class="r">${chk(r.worstCase)}</td><td class="r">${chk(r.simple)}</td>
+    <td class="r"><b>${r.score}</b></td><td>${pillStatus(r.approved==='Yes'?'Active':'Inactive')}</td>
+    <td>${rowBtns('decisions',i)}</td></tr>`;
+  }).join('')||'<tr><td colspan="12"><div class="empty-state"><div class="ic">🎯</div>No decisions yet</div></td></tr>';
 }
 
-// ═══════════════════════════════════════
-// MODAL FORMS
-// ═══════════════════════════════════════
-let _modalType = '';
+// ═══════════════════════════════════════════════════
+// FORMS
+// ═══════════════════════════════════════════════════
+const projOptions=()=>DB.projects.map(p=>`<option value="${p.id}">${p.id} — ${p.name}</option>`).join('');
+const actOptions=()=>DB.activities.map(a=>`<option>${a.name}</option>`).join('');
+const wrkOptions=()=>DB.workers.map(w=>`<option value="${w.id}">${w.name} (${w.role})</option>`).join('');
 
-function projOptions() { return DB.projects.map(p=>`<option value="${p.id}">${p.id} — ${p.name}</option>`).join(''); }
-function actOptions()  { return DB.activities.map(a=>`<option>${a.name}</option>`).join(''); }
-function wrkOptions()  { return DB.workers.map(w=>`<option value="${w.id}">${w.name} (${w.role})</option>`).join(''); }
-
-const FORMS = {
-  project: {
-    title: 'Add Project',
-    html: () => `
+const FORMS={
+  project:{
+    title:'Add Project',
+    html:()=>`
       <div class="form-row">
-        <div class="form-group"><label>Project Code</label><input id="f-id" placeholder="P004"></div>
+        <div class="form-group"><label>Code</label><input id="f-id" placeholder="P004"></div>
         <div class="form-group"><label>Status</label><select id="f-status"><option>Active</option><option>Planning</option><option>Completed</option><option>Inactive</option></select></div>
       </div>
       <div class="form-group"><label>Project Name</label><input id="f-name" placeholder="Villa C"></div>
@@ -855,19 +898,15 @@ const FORMS = {
         <div class="form-group"><label>Location</label><input id="f-location" placeholder="Ehden"></div>
         <div class="form-group"><label>Start Date</label><input id="f-startDate" type="date"></div>
       </div>
-      <div class="form-group"><label>Notes</label><input id="f-notes" placeholder="Optional notes"></div>`,
-    prefill: (r) => { setVal('f-id',r.id); setVal('f-name',r.name); setVal('f-client',r.client); setVal('f-location',r.location); setVal('f-startDate',r.startDate); setVal('f-notes',r.notes); setSelect('f-status',r.status); },
-    save: () => {
-      const entry = { id:$('f-id').value, name:$('f-name').value, client:$('f-client').value, location:$('f-location').value, status:$('f-status').value, startDate:$('f-startDate').value, notes:$('f-notes').value };
-      if (!entry.id||!entry.name) { alert('Code and Name are required'); return false; }
-      if (_editIdx >= 0) DB.projects[_editIdx] = entry; else DB.projects.push(entry); return true;
-    }
+      <div class="form-group"><label>Notes</label><input id="f-notes" placeholder="Optional"></div>`,
+    prefill:r=>{setVal('f-id',r.id);setVal('f-name',r.name);setVal('f-client',r.client);setVal('f-location',r.location);setVal('f-startDate',r.startDate);setVal('f-notes',r.notes);setSelect('f-status',r.status);},
+    save:()=>{const e={id:$('f-id').value,name:$('f-name').value,client:$('f-client').value,location:$('f-location').value,status:$('f-status').value,startDate:$('f-startDate').value,notes:$('f-notes').value};if(!e.id||!e.name){alert('Code and Name required');return false;}if(_editIdx>=0)DB.projects[_editIdx]=e;else DB.projects.push(e);return true;}
   },
-  worker: {
-    title: 'Add Worker',
-    html: () => `
+  worker:{
+    title:'Add Worker',
+    html:()=>`
       <div class="form-row">
-        <div class="form-group"><label>Worker ID</label><input id="f-id" placeholder="W005"></div>
+        <div class="form-group"><label>ID</label><input id="f-id" placeholder="W005"></div>
         <div class="form-group"><label>Status</label><select id="f-status"><option>Active</option><option>Inactive</option></select></div>
       </div>
       <div class="form-group"><label>Full Name</label><input id="f-name" placeholder="Name"></div>
@@ -880,32 +919,23 @@ const FORMS = {
         <div class="form-group"><label>Daily Rate ($/8h)</label><input id="f-dailyRate" type="number" step="0.5" placeholder="25"></div>
         <div class="form-group"><label>Default Project</label><select id="f-defaultProject">${projOptions()}</select></div>
       </div>`,
-    prefill: (r) => { setVal('f-id',r.id); setVal('f-name',r.name); setVal('f-role',r.role); setVal('f-phone',r.phone); setVal('f-dailyRate',r.dailyRate); setVal('f-hireDate',r.hireDate); setSelect('f-status',r.status); setSelect('f-defaultProject',r.defaultProject); },
-    save: () => {
-      const dr = parseFloat($('f-dailyRate').value)||0;
-      const entry = { id:$('f-id').value, name:$('f-name').value, role:$('f-role').value, phone:$('f-phone').value, dailyRate:dr, hourlyRate:+(dr/8).toFixed(4), defaultProject:$('f-defaultProject').value, status:$('f-status').value, hireDate:$('f-hireDate').value };
-      if (!entry.id||!entry.name) { alert('ID and Name required'); return false; }
-      if (_editIdx >= 0) DB.workers[_editIdx] = entry; else DB.workers.push(entry); return true;
-    }
+    prefill:r=>{setVal('f-id',r.id);setVal('f-name',r.name);setVal('f-role',r.role);setVal('f-phone',r.phone);setVal('f-dailyRate',r.dailyRate);setVal('f-hireDate',r.hireDate);setSelect('f-status',r.status);setSelect('f-defaultProject',r.defaultProject);},
+    save:()=>{const dr=parseFloat($('f-dailyRate').value)||0;const e={id:$('f-id').value,name:$('f-name').value,role:$('f-role').value,phone:$('f-phone').value,dailyRate:dr,hourlyRate:+(dr/8).toFixed(4),defaultProject:$('f-defaultProject').value,status:$('f-status').value,hireDate:$('f-hireDate').value};if(!e.id||!e.name){alert('ID and Name required');return false;}if(_editIdx>=0)DB.workers[_editIdx]=e;else DB.workers.push(e);return true;}
   },
-  activity: {
-    title: 'Add Activity',
-    html: () => `
+  activity:{
+    title:'Add Activity',
+    html:()=>`
       <div class="form-group"><label>Activity Name</label><input id="f-name" placeholder="e.g. Footing"></div>
       <div class="form-row">
         <div class="form-group"><label>Group</label><select id="f-group"><option>Concrete</option><option>Masonry</option><option>Finishing</option><option>Steel</option><option>Other</option></select></div>
         <div class="form-group"><label>Unit</label><select id="f-unit"><option>m³</option><option>m²</option><option>ton</option><option>m</option><option>No.</option><option>LS</option></select></div>
       </div>`,
-    prefill: (r) => { setVal('f-name',r.name); setSelect('f-group',r.group); setSelect('f-unit',r.unit); },
-    save: () => {
-      const entry = { name:$('f-name').value, group:$('f-group').value, unit:$('f-unit').value };
-      if (!entry.name) { alert('Name required'); return false; }
-      if (_editIdx >= 0) DB.activities[_editIdx] = entry; else DB.activities.push(entry); return true;
-    }
+    prefill:r=>{setVal('f-name',r.name);setSelect('f-group',r.group);setSelect('f-unit',r.unit);},
+    save:()=>{const e={name:$('f-name').value,group:$('f-group').value,unit:$('f-unit').value};if(!e.name){alert('Name required');return false;}if(_editIdx>=0)DB.activities[_editIdx]=e;else DB.activities.push(e);return true;}
   },
-  payroll: {
-    title: 'Add Payroll Entry',
-    html: () => `
+  payroll:{
+    title:'Add Payroll Entry',
+    html:()=>`
       <div class="form-row">
         <div class="form-group"><label>Date</label><input id="f-date" type="date" value="${new Date().toISOString().split('T')[0]}"></div>
         <div class="form-group"><label>Project</label><select id="f-project">${projOptions()}</select></div>
@@ -915,19 +945,12 @@ const FORMS = {
         <div class="form-group"><label>Worker</label><select id="f-worker">${wrkOptions()}</select></div>
       </div>
       <div class="form-group"><label>Hours Worked</label><input id="f-hours" type="number" step="0.5" placeholder="8"></div>`,
-    prefill: (r) => { setVal('f-date',r.date); setSelect('f-project',r.project); setSelect('f-activity',r.activity); setSelect('f-worker',r.workerId); setVal('f-hours',r.hours); },
-    save: () => {
-      const wId = $('f-worker').value;
-      const w   = DB.workers.find(x=>x.id===wId);
-      const hrs = parseFloat($('f-hours').value)||0;
-      const entry = { date:$('f-date').value, project:$('f-project').value, activity:$('f-activity').value, workerId:wId, workerName:w?w.name:'', role:w?w.role:'', hours:hrs, hourlyRate:w?w.hourlyRate:0, laborCost:+(hrs*(w?w.hourlyRate:0)).toFixed(2) };
-      if (!entry.date||!hrs) { alert('Date and Hours required'); return false; }
-      if (_editIdx >= 0) DB.payroll[_editIdx] = entry; else DB.payroll.push(entry); return true;
-    }
+    prefill:r=>{setVal('f-date',r.date);setSelect('f-project',r.project);setSelect('f-activity',r.activity);setSelect('f-worker',r.workerId);setVal('f-hours',r.hours);},
+    save:()=>{const wId=$('f-worker').value;const w=DB.workers.find(x=>x.id===wId);const hrs=parseFloat($('f-hours').value)||0;const e={date:$('f-date').value,project:$('f-project').value,activity:$('f-activity').value,workerId:wId,workerName:w?w.name:'',role:w?w.role:'',hours:hrs,hourlyRate:w?w.hourlyRate:0,laborCost:+(hrs*(w?w.hourlyRate:0)).toFixed(2)};if(!e.date||!hrs){alert('Date and Hours required');return false;}if(_editIdx>=0)DB.payroll[_editIdx]=e;else DB.payroll.push(e);return true;}
   },
-  material: {
-    title: 'Add Material Entry',
-    html: () => `
+  material:{
+    title:'Add Material Entry',
+    html:()=>`
       <div class="form-row">
         <div class="form-group"><label>Date</label><input id="f-date" type="date" value="${new Date().toISOString().split('T')[0]}"></div>
         <div class="form-group"><label>Project</label><select id="f-project">${projOptions()}</select></div>
@@ -937,11 +960,11 @@ const FORMS = {
         <div class="form-group"><label>Unit</label><select id="f-unit"><option>m³</option><option>m²</option><option>ton</option></select></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label>Volume / Qty</label><input id="f-volume" type="number" step="0.1" placeholder="0"></div>
-        <div class="form-group"><label>Cement (bags)</label><input id="f-cement" type="number" step="1" placeholder="0"></div>
+        <div class="form-group"><label>Volume</label><input id="f-volume" type="number" step="0.1" placeholder="0"></div>
+        <div class="form-group"><label>Cement (bags)</label><input id="f-cement" type="number" placeholder="0"></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label>Steel (kg)</label><input id="f-steel" type="number" step="1" placeholder="0"></div>
+        <div class="form-group"><label>Steel (kg)</label><input id="f-steel" type="number" placeholder="0"></div>
         <div class="form-group"><label>Concrete m³</label><input id="f-concrete" type="number" step="0.1" placeholder="0"></div>
       </div>
       <div class="form-row">
@@ -949,19 +972,15 @@ const FORMS = {
         <div class="form-group"><label>Gravel m³</label><input id="f-gravel" type="number" step="0.1" placeholder="0"></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label>Other Cost ($)</label><input id="f-otherCost" type="number" step="1" placeholder="0"></div>
-        <div class="form-group"><label>Total Material ($)</label><input id="f-totalMaterial" type="number" step="1" placeholder="0"></div>
+        <div class="form-group"><label>Other Cost ($)</label><input id="f-otherCost" type="number" placeholder="0"></div>
+        <div class="form-group"><label>Total Material ($)</label><input id="f-totalMaterial" type="number" placeholder="0"></div>
       </div>`,
-    prefill: (r) => { setVal('f-date',r.date); setSelect('f-project',r.project); setSelect('f-activity',r.activity); setSelect('f-unit',r.unit); setVal('f-volume',r.volume); setVal('f-cement',r.cement); setVal('f-steel',r.steel); setVal('f-concrete',r.concrete); setVal('f-sand',r.sand); setVal('f-gravel',r.gravel); setVal('f-otherCost',r.otherCost); setVal('f-totalMaterial',r.totalMaterial); },
-    save: () => {
-      const entry = { date:$('f-date').value, project:$('f-project').value, activity:$('f-activity').value, volume:+$('f-volume').value, unit:$('f-unit').value, cement:+$('f-cement').value, steel:+$('f-steel').value, concrete:+$('f-concrete').value, sand:+$('f-sand').value, gravel:+$('f-gravel').value, otherCost:+$('f-otherCost').value, totalMaterial:+$('f-totalMaterial').value };
-      if (!entry.date) { alert('Date required'); return false; }
-      if (_editIdx >= 0) DB.materials[_editIdx] = entry; else DB.materials.push(entry); return true;
-    }
+    prefill:r=>{setVal('f-date',r.date);setSelect('f-project',r.project);setSelect('f-activity',r.activity);setSelect('f-unit',r.unit);setVal('f-volume',r.volume);setVal('f-cement',r.cement);setVal('f-steel',r.steel);setVal('f-concrete',r.concrete);setVal('f-sand',r.sand);setVal('f-gravel',r.gravel);setVal('f-otherCost',r.otherCost);setVal('f-totalMaterial',r.totalMaterial);},
+    save:()=>{const e={date:$('f-date').value,project:$('f-project').value,activity:$('f-activity').value,volume:+$('f-volume').value,unit:$('f-unit').value,cement:+$('f-cement').value,steel:+$('f-steel').value,concrete:+$('f-concrete').value,sand:+$('f-sand').value,gravel:+$('f-gravel').value,otherCost:+$('f-otherCost').value,totalMaterial:+$('f-totalMaterial').value};if(!e.date){alert('Date required');return false;}if(_editIdx>=0)DB.materials[_editIdx]=e;else DB.materials.push(e);return true;}
   },
-  cost: {
-    title: 'Add Cost Tracking Entry',
-    html: () => `
+  cost:{
+    title:'Add Cost Entry',
+    html:()=>`
       <div class="form-row">
         <div class="form-group"><label>Date</label><input id="f-date" type="date" value="${new Date().toISOString().split('T')[0]}"></div>
         <div class="form-group"><label>Project</label><select id="f-project">${projOptions()}</select></div>
@@ -975,31 +994,25 @@ const FORMS = {
         <div class="form-group"><label>Unit</label><select id="f-unit"><option>m³</option><option>m²</option><option>ton</option><option>m</option></select></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label>Labor Cost ($)</label><input id="f-labor" type="number" step="0.01" placeholder="0"></div>
-        <div class="form-group"><label>Material Cost ($)</label><input id="f-material" type="number" step="0.01" placeholder="0"></div>
+        <div class="form-group"><label>Labor ($)</label><input id="f-labor" type="number" step="0.01" placeholder="0"></div>
+        <div class="form-group"><label>Material ($)</label><input id="f-material" type="number" step="0.01" placeholder="0"></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label>Other Cost ($)</label><input id="f-other" type="number" step="0.01" placeholder="0"></div>
+        <div class="form-group"><label>Other ($)</label><input id="f-other" type="number" step="0.01" placeholder="0"></div>
         <div class="form-group"><label>Revenue ($)</label><input id="f-revenue" type="number" step="0.01" placeholder="0"></div>
       </div>
       <div class="form-group"><label>Labor Hours</label><input id="f-laborHours" type="number" step="0.5" placeholder="0"></div>`,
-    prefill: (r) => { setVal('f-date',r.date); setSelect('f-project',r.project); setSelect('f-activity',r.activity); setSelect('f-status',r.status); setVal('f-volume',r.volume); setSelect('f-unit',r.unit); setVal('f-labor',r.labor); setVal('f-material',r.material); setVal('f-other',r.other); setVal('f-revenue',r.revenue); setVal('f-laborHours',r.laborHours); },
-    save: () => {
-      const labor=+$('f-labor').value, mat=+$('f-material').value, other=+$('f-other').value, rev=+$('f-revenue').value, vol=+$('f-volume').value;
-      const totalCost = labor+mat+other, profit = rev-totalCost, ppu = vol?+(profit/vol).toFixed(4):0;
-      const entry = { date:$('f-date').value, project:$('f-project').value, activity:$('f-activity').value, status:$('f-status').value, volume:vol, unit:$('f-unit').value, labor, material:mat, other, totalCost:+totalCost.toFixed(2), revenue:rev, profit:+profit.toFixed(2), profitPerUnit:ppu, laborHours:+$('f-laborHours').value };
-      if (!entry.date) { alert('Date required'); return false; }
-      if (_editIdx >= 0) DB.cost[_editIdx] = entry; else DB.cost.push(entry); return true;
-    }
+    prefill:r=>{setVal('f-date',r.date);setSelect('f-project',r.project);setSelect('f-activity',r.activity);setSelect('f-status',r.status);setVal('f-volume',r.volume);setSelect('f-unit',r.unit);setVal('f-labor',r.labor);setVal('f-material',r.material);setVal('f-other',r.other);setVal('f-revenue',r.revenue);setVal('f-laborHours',r.laborHours);},
+    save:()=>{const labor=+$('f-labor').value,mat=+$('f-material').value,other=+$('f-other').value,rev=+$('f-revenue').value,vol=+$('f-volume').value;const totalCost=labor+mat+other,profit=rev-totalCost,ppu=vol?+(profit/vol).toFixed(4):0;const e={date:$('f-date').value,project:$('f-project').value,activity:$('f-activity').value,status:$('f-status').value,volume:vol,unit:$('f-unit').value,labor,material:mat,other,totalCost:+totalCost.toFixed(2),revenue:rev,profit:+profit.toFixed(2),profitPerUnit:ppu,laborHours:+$('f-laborHours').value};if(!e.date){alert('Date required');return false;}if(_editIdx>=0)DB.cost[_editIdx]=e;else DB.cost.push(e);return true;}
   },
-  daily: {
-    title: 'Add Daily Log Entry',
-    html: () => `
+  daily:{
+    title:'Add Daily Log',
+    html:()=>`
       <div class="form-row">
         <div class="form-group"><label>Date</label><input id="f-date" type="date" value="${new Date().toISOString().split('T')[0]}"></div>
         <div class="form-group"><label>Project</label><select id="f-project">${projOptions()}</select></div>
       </div>
-      <p style="font-size:11px;color:var(--muted);font-family:var(--mono);">Score each category 0 to 1 (e.g. 0.8, 0.9, 1)</p>
+      <p style="font-size:11px;color:var(--muted);font-family:var(--mono);">Score 0 to 1 per category</p>
       <div class="form-row">
         <div class="form-group"><label>Mindset</label><input id="f-mindset" type="number" step="0.1" min="0" max="1" placeholder="1"></div>
         <div class="form-group"><label>Site Control</label><input id="f-siteControl" type="number" step="0.1" min="0" max="1" placeholder="1"></div>
@@ -1013,76 +1026,53 @@ const FORMS = {
         <div class="form-group"><label>Discipline</label><input id="f-discipline" type="number" step="0.1" min="0" max="1" placeholder="1"></div>
       </div>
       <div class="form-group"><label>Notes</label><input id="f-notes" placeholder="What happened today?"></div>`,
-    prefill: (r) => { setVal('f-date',r.date); setSelect('f-project',r.project); setVal('f-mindset',r.mindset); setVal('f-siteControl',r.siteControl); setVal('f-concreteQuality',r.concreteQuality); setVal('f-costControl',r.costControl); setVal('f-problemHandling',r.problemHandling); setVal('f-discipline',r.discipline); setVal('f-notes',r.notes); },
-    save: () => {
-      const scores = ['mindset','siteControl','concreteQuality','costControl','problemHandling','discipline'];
-      const vals = scores.map(s=>parseFloat($('f-'+s).value)||0);
-      const avg  = +(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(4);
-      const entry = { date:$('f-date').value, project:$('f-project').value, ...Object.fromEntries(scores.map((s,i)=>[s,vals[i]])), totalScore:avg, notes:$('f-notes').value };
-      if (!entry.date) { alert('Date required'); return false; }
-      if (_editIdx >= 0) DB.daily[_editIdx] = entry; else DB.daily.push(entry); return true;
-    }
+    prefill:r=>{setVal('f-date',r.date);setSelect('f-project',r.project);setVal('f-mindset',r.mindset);setVal('f-siteControl',r.siteControl);setVal('f-concreteQuality',r.concreteQuality);setVal('f-costControl',r.costControl);setVal('f-problemHandling',r.problemHandling);setVal('f-discipline',r.discipline);setVal('f-notes',r.notes);},
+    save:()=>{const sc=['mindset','siteControl','concreteQuality','costControl','problemHandling','discipline'];const vals=sc.map(s=>parseFloat($('f-'+s).value)||0);const avg=+(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(4);const e={date:$('f-date').value,project:$('f-project').value,...Object.fromEntries(sc.map((s,i)=>[s,vals[i]])),totalScore:avg,notes:$('f-notes').value};if(!e.date){alert('Date required');return false;}if(_editIdx>=0)DB.daily[_editIdx]=e;else DB.daily.push(e);return true;}
   },
-  decision: {
-    title: 'Add Decision',
-    html: () => `
+  decision:{
+    title:'Add Decision',
+    html:()=>`
       <div class="form-row">
         <div class="form-group"><label>Date</label><input id="f-date" type="date" value="${new Date().toISOString().split('T')[0]}"></div>
         <div class="form-group"><label>Project</label><select id="f-project">${projOptions()}</select></div>
       </div>
       <div class="form-group"><label>Activity</label><select id="f-activity">${actOptions()}</select></div>
-      <div class="form-group"><label>Decision Description</label><textarea id="f-decision" rows="3" placeholder="Describe the decision made..."></textarea></div>
-      <p style="font-size:11px;color:var(--muted);font-family:var(--mono);">Check each criterion (1 = yes, 0 = no)</p>
+      <div class="form-group"><label>Decision</label><textarea id="f-decision" rows="3" placeholder="Describe the decision..."></textarea></div>
+      <p style="font-size:11px;color:var(--muted);font-family:var(--mono);">1 = Yes · 0 = No</p>
       <div class="form-row">
-        <div class="form-group"><label>Facts Clear</label><select id="f-facts"><option value="1">Yes (1)</option><option value="0">No (0)</option></select></div>
-        <div class="form-group"><label>No Ego</label><select id="f-noEgo"><option value="1">Yes (1)</option><option value="0">No (0)</option></select></div>
+        <div class="form-group"><label>Facts Clear</label><select id="f-facts"><option value="1">Yes</option><option value="0">No</option></select></div>
+        <div class="form-group"><label>No Ego</label><select id="f-noEgo"><option value="1">Yes</option><option value="0">No</option></select></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label>Numbers OK</label><select id="f-numbersOk"><option value="1">Yes (1)</option><option value="0">No (0)</option></select></div>
-        <div class="form-group"><label>Worst Case OK</label><select id="f-worstCase"><option value="1">Yes (1)</option><option value="0">No (0)</option></select></div>
+        <div class="form-group"><label>Numbers OK</label><select id="f-numbersOk"><option value="1">Yes</option><option value="0">No</option></select></div>
+        <div class="form-group"><label>Worst Case OK</label><select id="f-worstCase"><option value="1">Yes</option><option value="0">No</option></select></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label>Simple Solution</label><select id="f-simple"><option value="1">Yes (1)</option><option value="0">No (0)</option></select></div>
+        <div class="form-group"><label>Simple Solution</label><select id="f-simple"><option value="1">Yes</option><option value="0">No</option></select></div>
         <div class="form-group"><label>Approved?</label><select id="f-approved"><option>Yes</option><option>No</option></select></div>
       </div>
-      <div class="form-group"><label>Follow-up Notes</label><input id="f-followUp" placeholder="Optional follow-up"></div>`,
-    prefill: (r) => { setVal('f-date',r.date); setSelect('f-project',r.project); setSelect('f-activity',r.activity); setVal('f-decision',r.decision); setSelect('f-facts',r.facts); setSelect('f-noEgo',r.noEgo); setSelect('f-numbersOk',r.numbersOk); setSelect('f-worstCase',r.worstCase); setSelect('f-simple',r.simple); setSelect('f-approved',r.approved); setVal('f-followUp',r.followUp); },
-    save: () => {
-      const checks = ['facts','noEgo','numbersOk','worstCase','simple'];
-      const vals   = checks.map(c=>+$('f-'+c).value);
-      const score  = +(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2);
-      const entry  = { date:$('f-date').value, project:$('f-project').value, activity:$('f-activity').value, decision:$('f-decision').value, ...Object.fromEntries(checks.map((c,i)=>[c,vals[i]])), score, approved:$('f-approved').value, followUp:$('f-followUp').value };
-      if (!entry.date||!entry.decision) { alert('Date and Decision required'); return false; }
-      if (_editIdx >= 0) DB.decisions[_editIdx] = entry; else DB.decisions.push(entry); return true;
-    }
+      <div class="form-group"><label>Follow-up</label><input id="f-followUp" placeholder="Optional"></div>`,
+    prefill:r=>{setVal('f-date',r.date);setSelect('f-project',r.project);setSelect('f-activity',r.activity);setVal('f-decision',r.decision);setSelect('f-facts',r.facts);setSelect('f-noEgo',r.noEgo);setSelect('f-numbersOk',r.numbersOk);setSelect('f-worstCase',r.worstCase);setSelect('f-simple',r.simple);setSelect('f-approved',r.approved);setVal('f-followUp',r.followUp);},
+    save:()=>{const ch=['facts','noEgo','numbersOk','worstCase','simple'];const vals=ch.map(c=>+$('f-'+c).value);const score=+(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2);const e={date:$('f-date').value,project:$('f-project').value,activity:$('f-activity').value,decision:$('f-decision').value,...Object.fromEntries(ch.map((c,i)=>[c,vals[i]])),score,approved:$('f-approved').value,followUp:$('f-followUp').value};if(!e.date||!e.decision){alert('Date and Decision required');return false;}if(_editIdx>=0)DB.decisions[_editIdx]=e;else DB.decisions.push(e);return true;}
   }
 };
 
-function openModal(type) {
-  _editIdx = -1;
-  _modalType = type;
-  const form = FORMS[type];
-  $('modal-title').textContent = form.title;
-  $('modal-body').innerHTML    = form.html();
-  $('modal-overlay').classList.add('open');
-}
-function closeModal() { _editIdx = -1; $('modal-overlay').classList.remove('open'); }
-function saveModalEntry() {
-  const ok = FORMS[_modalType].save();
-  if (ok) { closeModal(); renderAll(); autoSave(); }
-}
-$('modal-overlay').addEventListener('click', e => { if (e.target === $('modal-overlay')) closeModal(); });
+function openModal(type){_editIdx=-1;_modalType=type;const f=FORMS[type];$('modal-title').textContent=f.title;$('modal-body').innerHTML=f.html();$('modal-overlay').classList.add('open');}
+function closeModal(){_editIdx=-1;$('modal-overlay').classList.remove('open');}
+function saveModalEntry(){const ok=FORMS[_modalType].save();if(ok){closeModal();renderAll();autoSave();updateCharts();}}
+$('modal-overlay').addEventListener('click',e=>{if(e.target===$('modal-overlay'))closeModal();});
 
-// ═══════════════════════════════════════
+// ═══════════════════════════════════════════════════
 // INIT
-// ═══════════════════════════════════════
-window.addEventListener('load', () => {
+// ═══════════════════════════════════════════════════
+window.addEventListener('load',()=>{
   loadConfig();
-  const local = localStorage.getItem('contractor_db');
-  if (local) { try { DB = JSON.parse(local); } catch(e){} }
+  const local=localStorage.getItem('contractor_db');
+  if(local){try{DB=JSON.parse(local);}catch(e){}}
   renderAll();
-  if (GH.token && GH.repo) loadFromGitHub();
-  else setStatus('', 'Not connected — go to GitHub Setup to configure');
+  setTimeout(updateCharts,100);
+  if(GH.token&&GH.repo)loadFromGitHub();
+  else setStatus('','Not connected — go to GitHub Setup');
 });
 </script>
 </body>
