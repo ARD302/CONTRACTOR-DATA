@@ -604,6 +604,42 @@
       "hours": 4,
       "hourlyRate": 2,
       "laborCost": 8
+    },
+    {
+      "date": "2026-04-04",
+      "project": "P004",
+      "activity": "Slab",
+      "subActivity": "",
+      "workerId": "W005",
+      "workerName": "Nidal",
+      "role": "Labor",
+      "hours": 8,
+      "hourlyRate": 2.75,
+      "laborCost": 22
+    },
+    {
+      "date": "2026-04-04",
+      "project": "P004",
+      "activity": "Slab",
+      "subActivity": "",
+      "workerId": "W011",
+      "workerName": "aghyad",
+      "role": "Labor",
+      "hours": 8,
+      "hourlyRate": 2.25,
+      "laborCost": 18
+    },
+    {
+      "date": "2026-04-04",
+      "project": "P004",
+      "activity": "Slab",
+      "subActivity": "",
+      "workerId": "W016",
+      "workerName": "Hamoudeh",
+      "role": "Labor",
+      "hours": 8,
+      "hourlyRate": 2.125,
+      "laborCost": 17
     }
   ],
   "materials": [],
@@ -670,6 +706,102 @@
   "customPages": [],
   "customData": {},
   "aiMemory": [
+    {
+      "id": "aim-1775327691955",
+      "timestamp": "2026-04-04T18:34:51.955Z",
+      "date": "2026-04-04",
+      "project": "",
+      "activity": "",
+      "range": "all",
+      "task": "labor",
+      "title": "Labor Efficiency Review",
+      "summary": "31 payroll row(s) reviewed. Total scoped labor cost is $613.52 for 216 hours.",
+      "warnings": [
+        "No labor pattern available."
+      ],
+      "recommendations": [
+        "Check whether Tie Beam setup or sequencing can be improved before the next cycle.",
+        "Use this page after every pour or structural cycle to keep labor creep visible."
+      ],
+      "draftAction": "Daily note draft: Tie Beam on P003 consumed 18.0 labor hours. Review crew allocation and overtime before repeating this setup.",
+      "facts": [
+        "Highest labor intensity —",
+        "Split worker cases 0",
+        "Labor rows 31"
+      ],
+      "priority": "info",
+      "source": "auto",
+      "tokensUsed": null,
+      "mode": "local",
+      "sourceDataHash": "260b117",
+      "savedToDecision": null,
+      "savedToDaily": null,
+      "isDraft": false
+    },
+    {
+      "id": "aim-1775327651948",
+      "timestamp": "2026-04-04T18:34:11.948Z",
+      "date": "2026-04-04",
+      "project": "",
+      "activity": "",
+      "range": "all",
+      "task": "labor",
+      "title": "Labor Efficiency Review",
+      "summary": "30 payroll row(s) reviewed. Total scoped labor cost is $596.52 for 208 hours.",
+      "warnings": [
+        "No labor pattern available."
+      ],
+      "recommendations": [
+        "Check whether Tie Beam setup or sequencing can be improved before the next cycle.",
+        "Use this page after every pour or structural cycle to keep labor creep visible."
+      ],
+      "draftAction": "Daily note draft: Tie Beam on P003 consumed 18.0 labor hours. Review crew allocation and overtime before repeating this setup.",
+      "facts": [
+        "Highest labor intensity —",
+        "Split worker cases 0",
+        "Labor rows 30"
+      ],
+      "priority": "info",
+      "source": "auto",
+      "tokensUsed": null,
+      "mode": "local",
+      "sourceDataHash": "260b0f8",
+      "savedToDecision": null,
+      "savedToDaily": null,
+      "isDraft": false
+    },
+    {
+      "id": "aim-1775327623942",
+      "timestamp": "2026-04-04T18:33:43.942Z",
+      "date": "2026-04-04",
+      "project": "",
+      "activity": "",
+      "range": "all",
+      "task": "labor",
+      "title": "Labor Efficiency Review",
+      "summary": "29 payroll row(s) reviewed. Total scoped labor cost is $578.52 for 200 hours.",
+      "warnings": [
+        "No labor pattern available."
+      ],
+      "recommendations": [
+        "Check whether Tie Beam setup or sequencing can be improved before the next cycle.",
+        "Use this page after every pour or structural cycle to keep labor creep visible."
+      ],
+      "draftAction": "Daily note draft: Tie Beam on P003 consumed 18.0 labor hours. Review crew allocation and overtime before repeating this setup.",
+      "facts": [
+        "Highest labor intensity —",
+        "Split worker cases 0",
+        "Labor rows 29"
+      ],
+      "priority": "info",
+      "source": "auto",
+      "tokensUsed": null,
+      "mode": "local",
+      "sourceDataHash": "260ae4e",
+      "savedToDecision": null,
+      "savedToDaily": null,
+      "isDraft": false
+    },
     {
       "id": "aim-1775327594156",
       "timestamp": "2026-04-04T18:33:14.156Z",
