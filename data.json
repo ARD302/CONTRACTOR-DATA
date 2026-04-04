@@ -448,6 +448,78 @@
       "hours": 5,
       "hourlyRate": 2.125,
       "laborCost": 10.63
+    },
+    {
+      "date": "2026-04-04",
+      "project": "P003",
+      "activity": "Slab",
+      "subActivity": "",
+      "workerId": "W001",
+      "workerName": "Kenan Sabra",
+      "role": "Foremen",
+      "hours": 8,
+      "hourlyRate": 4.125,
+      "laborCost": 33
+    },
+    {
+      "date": "2026-04-04",
+      "project": "P003",
+      "activity": "Slab",
+      "subActivity": "",
+      "workerId": "W002",
+      "workerName": "yael talje",
+      "role": "skilled labor",
+      "hours": 8,
+      "hourlyRate": 3.75,
+      "laborCost": 30
+    },
+    {
+      "date": "2026-04-04",
+      "project": "P003",
+      "activity": "Slab",
+      "subActivity": "",
+      "workerId": "W003",
+      "workerName": "Fady Sabra",
+      "role": "semi skilled labor",
+      "hours": 8,
+      "hourlyRate": 3.375,
+      "laborCost": 27
+    },
+    {
+      "date": "2026-04-04",
+      "project": "P003",
+      "activity": "Slab",
+      "subActivity": "",
+      "workerId": "W006",
+      "workerName": "issa",
+      "role": "labor",
+      "hours": 8,
+      "hourlyRate": 2.75,
+      "laborCost": 22
+    },
+    {
+      "date": "2026-04-04",
+      "project": "P003",
+      "activity": "Slab",
+      "subActivity": "",
+      "workerId": "W007",
+      "workerName": "hamze",
+      "role": "Labor",
+      "hours": 8,
+      "hourlyRate": 2.625,
+      "laborCost": 21
+    },
+    {
+      "date": "2026-04-04",
+      "project": "P003",
+      "activity": "Slab",
+      "subActivity": "",
+      "workerId": "W012",
+      "workerName": "Haydar",
+      "role": "labor",
+      "hours": 8,
+      "hourlyRate": 2.5,
+      "laborCost": 20
     }
   ],
   "materials": [],
@@ -514,6 +586,198 @@
   "customPages": [],
   "customData": {},
   "aiMemory": [
+    {
+      "id": "aim-1775327427290",
+      "timestamp": "2026-04-04T18:30:27.290Z",
+      "date": "2026-04-04",
+      "project": "",
+      "activity": "",
+      "range": "all",
+      "task": "labor",
+      "title": "Labor Efficiency Review",
+      "summary": "21 payroll row(s) reviewed. Total scoped labor cost is $376.02 for 128 hours.",
+      "warnings": [
+        "No labor pattern available."
+      ],
+      "recommendations": [
+        "Check whether Tie Beam setup or sequencing can be improved before the next cycle.",
+        "Use this page after every pour or structural cycle to keep labor creep visible."
+      ],
+      "draftAction": "Daily note draft: Tie Beam on P003 consumed 18.0 labor hours. Review crew allocation and overtime before repeating this setup.",
+      "facts": [
+        "Highest labor intensity —",
+        "Split worker cases 0",
+        "Labor rows 21"
+      ],
+      "priority": "info",
+      "source": "auto",
+      "tokensUsed": null,
+      "mode": "local",
+      "sourceDataHash": "260ad56",
+      "savedToDecision": null,
+      "savedToDaily": null,
+      "isDraft": false
+    },
+    {
+      "id": "aim-1775327401524",
+      "timestamp": "2026-04-04T18:30:01.524Z",
+      "date": "2026-04-04",
+      "project": "",
+      "activity": "",
+      "range": "all",
+      "task": "labor",
+      "title": "Labor Efficiency Review",
+      "summary": "20 payroll row(s) reviewed. Total scoped labor cost is $356.02 for 120 hours.",
+      "warnings": [
+        "No labor pattern available."
+      ],
+      "recommendations": [
+        "Check whether Tie Beam setup or sequencing can be improved before the next cycle.",
+        "Use this page after every pour or structural cycle to keep labor creep visible."
+      ],
+      "draftAction": "Daily note draft: Tie Beam on P003 consumed 18.0 labor hours. Review crew allocation and overtime before repeating this setup.",
+      "facts": [
+        "Highest labor intensity —",
+        "Split worker cases 0",
+        "Labor rows 20"
+      ],
+      "priority": "info",
+      "source": "auto",
+      "tokensUsed": null,
+      "mode": "local",
+      "sourceDataHash": "260ad37",
+      "savedToDecision": null,
+      "savedToDaily": null,
+      "isDraft": false
+    },
+    {
+      "id": "aim-1775327377952",
+      "timestamp": "2026-04-04T18:29:37.952Z",
+      "date": "2026-04-04",
+      "project": "",
+      "activity": "",
+      "range": "all",
+      "task": "labor",
+      "title": "Labor Efficiency Review",
+      "summary": "19 payroll row(s) reviewed. Total scoped labor cost is $335.02 for 112 hours.",
+      "warnings": [
+        "No labor pattern available."
+      ],
+      "recommendations": [
+        "Check whether Tie Beam setup or sequencing can be improved before the next cycle.",
+        "Use this page after every pour or structural cycle to keep labor creep visible."
+      ],
+      "draftAction": "Daily note draft: Tie Beam on P003 consumed 18.0 labor hours. Review crew allocation and overtime before repeating this setup.",
+      "facts": [
+        "Highest labor intensity —",
+        "Split worker cases 0",
+        "Labor rows 19"
+      ],
+      "priority": "info",
+      "source": "auto",
+      "tokensUsed": null,
+      "mode": "local",
+      "sourceDataHash": "260aa8d",
+      "savedToDecision": null,
+      "savedToDaily": null,
+      "isDraft": false
+    },
+    {
+      "id": "aim-1775327358693",
+      "timestamp": "2026-04-04T18:29:18.693Z",
+      "date": "2026-04-04",
+      "project": "",
+      "activity": "",
+      "range": "all",
+      "task": "labor",
+      "title": "Labor Efficiency Review",
+      "summary": "18 payroll row(s) reviewed. Total scoped labor cost is $313.02 for 104 hours.",
+      "warnings": [
+        "No labor pattern available."
+      ],
+      "recommendations": [
+        "Check whether Tie Beam setup or sequencing can be improved before the next cycle.",
+        "Use this page after every pour or structural cycle to keep labor creep visible."
+      ],
+      "draftAction": "Daily note draft: Tie Beam on P003 consumed 18.0 labor hours. Review crew allocation and overtime before repeating this setup.",
+      "facts": [
+        "Highest labor intensity —",
+        "Split worker cases 0",
+        "Labor rows 18"
+      ],
+      "priority": "info",
+      "source": "auto",
+      "tokensUsed": null,
+      "mode": "local",
+      "sourceDataHash": "260aa6e",
+      "savedToDecision": null,
+      "savedToDaily": null,
+      "isDraft": false
+    },
+    {
+      "id": "aim-1775327340022",
+      "timestamp": "2026-04-04T18:29:00.022Z",
+      "date": "2026-04-04",
+      "project": "",
+      "activity": "",
+      "range": "all",
+      "task": "labor",
+      "title": "Labor Efficiency Review",
+      "summary": "17 payroll row(s) reviewed. Total scoped labor cost is $286.02 for 96 hours.",
+      "warnings": [
+        "No labor pattern available."
+      ],
+      "recommendations": [
+        "Check whether Tie Beam setup or sequencing can be improved before the next cycle.",
+        "Use this page after every pour or structural cycle to keep labor creep visible."
+      ],
+      "draftAction": "Daily note draft: Tie Beam on P003 consumed 18.0 labor hours. Review crew allocation and overtime before repeating this setup.",
+      "facts": [
+        "Highest labor intensity —",
+        "Split worker cases 0",
+        "Labor rows 17"
+      ],
+      "priority": "info",
+      "source": "auto",
+      "tokensUsed": null,
+      "mode": "local",
+      "sourceDataHash": "260aa4f",
+      "savedToDecision": null,
+      "savedToDaily": null,
+      "isDraft": false
+    },
+    {
+      "id": "aim-1775327315676",
+      "timestamp": "2026-04-04T18:28:35.676Z",
+      "date": "2026-04-04",
+      "project": "",
+      "activity": "",
+      "range": "all",
+      "task": "labor",
+      "title": "Labor Efficiency Review",
+      "summary": "16 payroll row(s) reviewed. Total scoped labor cost is $256.02 for 88 hours.",
+      "warnings": [
+        "No labor pattern available."
+      ],
+      "recommendations": [
+        "Check whether Tie Beam setup or sequencing can be improved before the next cycle.",
+        "Use this page after every pour or structural cycle to keep labor creep visible."
+      ],
+      "draftAction": "Daily note draft: Tie Beam on P003 consumed 18.0 labor hours. Review crew allocation and overtime before repeating this setup.",
+      "facts": [
+        "Highest labor intensity —",
+        "Split worker cases 0",
+        "Labor rows 16"
+      ],
+      "priority": "info",
+      "source": "auto",
+      "tokensUsed": null,
+      "mode": "local",
+      "sourceDataHash": "260aa30",
+      "savedToDecision": null,
+      "savedToDaily": null,
+      "isDraft": false
+    },
     {
       "id": "aim-1775327233338",
       "timestamp": "2026-04-04T18:27:13.338Z",
